@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head><title>SDK Test - Find orderID setter</title>
+<style>
+    pre { white-space: pre-wrap; background: #f5f5f5; padding: 16px; font-size: 11px; max-height: 80vh; overflow: auto; }
+</style>
+</head>
+<body>
+<h3>SDK V6 - Find how orderID is set</h3>
+<pre id="output"></pre>
+<script src="https://www.sandbox.paypal.com/web-sdk/v6/core"></script>
+<script>
+function log(msg) {
+    document.getElementById('output').textContent += msg + '\n';
+}
+
+async function test() {
+    try {
+        const sdk = await paypal.createInstance({
+            clientId: 'AVkXtxVTYa-8-B3rc3R-V1oDdkKLczfkjQhysVVxdG4aj--k1WOvpfFN5hyP87KE1ve_Tt3tgV7ZgD0y',
+            components: ['card-fields'],
+        });
+
+        // Search the card-fields script source for "createOrder" and "orderID" patterns
+        const scripts = document.querySelectorAll('script[src]');
+        for (const s of scripts) {
+            if (s.src.includes('card-fields')) {
+                log('Found card-fields script: ' + s.src);
+                const resp = await fetch(s.src);
+                const code = await resp.text();
+                log('Script length: ' + code.length);
+
+                // Search for createOrder usage
+                log('\n=== Searching for "createOrder" in source ===');
+                const re1 = /[^\n]{0,80}createOrder[^\n]{0,80}/g;
+                let m;
+                while ((m = re1.exec(code)) !== null) {
+                    log('  @' + m.index + ': ...' + m[0] + '...');
+                }
+
+                // Search for orderID assignment patterns
+                log('\n=== Searching for orderID/orderId set patterns ===');
+                const re2 = /[^\n]{0,60}order[_]?[iI][dD][^\n]{0,60}/gi;
+                while ((m = re2.exec(code)) !== null) {
+                    if (m.index > code.length - 100) continue;
+                    log('  @' + m.index + ': ...' + m[0].substring(0, 140) + '...');
+                }
+
+                // Search for the constructor/factory of the session
+                log('\n=== Searching for "OneTimePaymentSession" ===');
+                const re3 = /[^\n]{0,100}OneTimePaymentSession[^\n]{0,100}/g;
+                while ((m = re3.exec(code)) !== null) {
+                    log('  @' + m.index + ': ...' + m[0].substring(0, 200) + '...');
+                }
+
+                // Search for "no order ID" error message
+                log('\n=== Searching for "no order ID" ===');
+                const re4 = /[^\n]{0,100}no order ID[^\n]{0,100}/gi;
+                while ((m = re4.exec(code)) !== null) {
+                    log('  @' + m.index + ': ...' + m[0].substring(0, 200) + '...');
+                }
+
+                // Get context around "no order ID"
+                const noOrderIdx = code.indexOf('no order ID');
+                if (noOrderIdx >= 0) {
+                    log('\n=== Context around "no order ID" (500 chars before, 200 after) ===');
+                    log(code.substring(Math.max(0, noOrderIdx - 500), noOrderIdx + 200));
+                }
+            }
+        }
+
+    } catch (e) {
+        log('Error: ' + e.message);
+        log(e.stack);
+    }
+}
+test();
+</script>
+</body>
+</html>

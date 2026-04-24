@@ -1,0 +1,11 @@
+{
+  "name": "reelshort-store",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@paypal/paypal-server-sdk": "^2.2.0",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "pptxgenjs": "^4.0.1"
+  }
+}

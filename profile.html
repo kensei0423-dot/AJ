@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJCloud - Profile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333333;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 40px;
+            background: #ffffff;
+            border-bottom: 3px solid #7ab648;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .logo .aj { color: #333; }
+        .logo .cloud { color: #7ab648; }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+            text-transform: uppercase;
+        }
+
+        .nav-links a:hover { color: #7ab648; }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .header-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7ab648, #5a9a2e);
+            border: 2px solid #5a9a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .header-username {
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid #ddd;
+            color: #888;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            border-color: #e53935;
+            color: #e53935;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            padding: 14px 40px;
+            font-size: 14px;
+            color: #999;
+            background: #fff;
+        }
+
+        .breadcrumb a {
+            color: #999;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover { color: #7ab648; }
+
+        .breadcrumb .sep { margin: 0 8px; }
+
+        .breadcrumb .current {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 28px 40px 60px;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7ab648, #5a9a2e);
+            border: 3px solid #5a9a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .profile-info h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .profile-info .member-since {
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+        }
+
+        .balance-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .balance-row {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            margin-bottom: 16px;
+        }
+
+        .balance-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            color: #666;
+        }
+
+        .coin-emoji {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #7ab648;
+        }
+
+        .balance-item strong {
+            color: #333;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .balance-divider {
+            color: #ccc;
+            font-size: 20px;
+        }
+
+        .vip-badge {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #eaf5e0, #d8ecc8);
+            border: 1.5px solid #7ab648;
+            border-radius: 8px;
+            padding: 10px 18px;
+        }
+
+        .vip-badge.show {
+            display: flex;
+        }
+
+        .vip-badge .vip-icon {
+            font-size: 18px;
+            color: #7ab648;
+        }
+
+        .vip-badge .vip-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .vip-badge .vip-expiry {
+            font-size: 12px;
+            color: #888;
+            margin-left: 4px;
+        }
+
+        .store-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: #7ab648;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .store-link:hover {
+            color: #5a9a2e;
+        }
+
+        /* Orders Section */
+        .orders-section {
+            margin-top: 32px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: #999;
+            padding: 24px 0;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: #f0f0f0;
+            color: #888;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .orders-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .orders-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .orders-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        .orders-table tr:nth-child(even) td {
+            background: #fafafa;
+        }
+
+        .orders-table tr:nth-child(odd) td {
+            background: #fff;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(122, 182, 72, 0.1);
+            color: #5a9a2e;
+            border: 1px solid #7ab648;
+        }
+
+        /* Saved Payment Methods */
+        .payment-methods-card {
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+        }
+
+        .payment-methods-card .balance-title {
+            margin-bottom: 12px;
+        }
+
+        .saved-method-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .saved-method-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .saved-method-icon {
+            font-style: italic;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+        }
+
+        .saved-method-icon .pp-pay { color: #009cde; }
+        .saved-method-icon .pp-pal { color: #003087; }
+        .saved-method-icon.card-icon { color: #666; font-style: normal; font-size: 16px; }
+
+        .saved-method-email {
+            flex: 1;
+            color: #555;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .saved-method-date {
+            color: #666;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .saved-method-delete-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            transition: color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .saved-method-delete-btn:hover {
+            color: #e53935;
+        }
+
+        .manage-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: #7ab648;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .manage-link:hover { color: #5a9a2e; }
+
+        /* Subscription Card */
+        .subscription-card {
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .subscription-card.show {
+            display: block;
+        }
+
+        .subscription-details {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .sub-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #eaf5e0, #d8ecc8);
+            border: 1.5px solid #7ab648;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #7ab648;
+            flex-shrink: 0;
+        }
+
+        .sub-info {
+            flex: 1;
+        }
+
+        .sub-plan-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .sub-price {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .sub-status-active {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(122, 182, 72, 0.1);
+            color: #5a9a2e;
+            border: 1px solid #7ab648;
+            flex-shrink: 0;
+        }
+
+        .sub-meta {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 20px;
+            padding: 14px 16px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .sub-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sub-meta-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sub-meta-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .sub-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .sub-change-btn {
+            background: linear-gradient(135deg, #eaf5e0, #d8ecc8);
+            border: 1.5px solid #7ab648;
+            color: #5a9a2e;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sub-change-btn:hover {
+            background: linear-gradient(135deg, #7ab648, #5a9a2e);
+            color: #fff;
+        }
+
+        .sub-cancel-btn {
+            background: none;
+            border: 1.5px solid #ddd;
+            color: #888;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sub-cancel-btn:hover {
+            border-color: #e53935;
+            color: #e53935;
+        }
+
+        .sub-renew-btn {
+            background: linear-gradient(135deg, #7ab648, #5a9a2e);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.2s;
+            display: none;
+        }
+
+        .sub-renew-btn.show {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sub-renew-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .sub-renew-tag {
+            background: #dc3545;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+
+        /* Retention Modal */
+        .retention-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .retention-overlay.show {
+            display: flex;
+        }
+
+        .retention-box {
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 36px 40px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .retention-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(122, 182, 72, 0.15), rgba(122, 182, 72, 0.05));
+            border: 2px solid #7ab648;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+
+        .retention-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .retention-desc {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .retention-offer {
+            background: linear-gradient(135deg, #eaf5e0, #d8ecc8);
+            border: 1.5px solid #7ab648;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+        }
+
+        .retention-offer-label {
+            font-size: 12px;
+            color: #5a9a2e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .retention-offer-plan {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .retention-offer-price {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .retention-original-price {
+            font-size: 16px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .retention-discount-price {
+            font-size: 24px;
+            font-weight: 800;
+            color: #7ab648;
+        }
+
+        .retention-discount-tag {
+            background: #dc3545;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .retention-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .retention-accept-btn {
+            background: linear-gradient(135deg, #7ab648, #5a9a2e);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 13px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+
+        .retention-accept-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .retention-decline-btn {
+            background: none;
+            border: 1.5px solid #ddd;
+            color: #888;
+            border-radius: 8px;
+            padding: 11px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .retention-decline-btn:hover {
+            border-color: #e53935;
+            color: #e53935;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header { padding: 10px 20px; }
+            .breadcrumb { padding: 14px 20px; }
+            .main-content { padding: 20px; }
+            .profile-card { flex-direction: column; text-align: center; padding: 24px; }
+            .balance-row { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .orders-table { font-size: 12px; }
+            .orders-table th, .orders-table td { padding: 8px 10px; }
+            .nav-links { display: none; }
+            .subscription-details { flex-wrap: wrap; }
+            .sub-meta { flex-direction: column; gap: 12px; }
+            .sub-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <a href="/" class="logo"><span class="aj">AJ</span><span class="cloud">CLOUD</span></a>
+            <div class="nav-links">
+                <a href="/">Store</a>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-user">
+                <div class="header-avatar" id="header-avatar"></div>
+                <span class="header-username" id="header-username"></span>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/">Store</a><span class="sep">/</span><span class="current">Profile</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-avatar" id="profile-avatar"></div>
+            <div class="profile-info">
+                <h2 id="username-display"></h2>
+                <div class="member-since">Member since <span id="member-since"></span></div>
+            </div>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div class="balance-title">Device Info</div>
+            <div class="balance-row">
+                <div class="balance-item">
+                    Devices:&nbsp; <span class="coin-emoji">&#128247;</span>&nbsp;<strong id="coins-balance">0</strong>
+                </div>
+                <span class="balance-divider">|</span>
+                <div class="balance-item">
+                    Storage:&nbsp; <span class="coin-emoji">&#9729;</span>&nbsp;<strong id="bonus-balance">0</strong> GB
+                </div>
+            </div>
+            <div class="vip-badge" id="vip-badge">
+                <span class="vip-icon">&#9729;</span>
+                <span class="vip-text" id="vip-plan"></span>
+                <span class="vip-expiry">expires <span id="vip-expiry"></span></span>
+            </div>
+            <a href="/" class="store-link">Manage cloud storage &#8250;</a>
+        </div>
+
+        <!-- Subscription Management -->
+        <div class="subscription-card" id="subscription-card">
+            <div class="balance-title">Subscription</div>
+            <div class="subscription-details">
+                <div class="sub-icon">&#9819;</div>
+                <div class="sub-info">
+                    <div class="sub-plan-name" id="sub-plan-name"></div>
+                    <div class="sub-price" id="sub-price"></div>
+                </div>
+                <span class="sub-status-active">Active</span>
+            </div>
+            <div class="sub-meta">
+                <div class="sub-meta-item">
+                    <span class="sub-meta-label">Current Plan</span>
+                    <span class="sub-meta-value" id="sub-current-plan"></span>
+                </div>
+                <div class="sub-meta-item">
+                    <span class="sub-meta-label">Expires</span>
+                    <span class="sub-meta-value" id="sub-expires"></span>
+                </div>
+                <div class="sub-meta-item">
+                    <span class="sub-meta-label">Days Remaining</span>
+                    <span class="sub-meta-value" id="sub-days-left"></span>
+                </div>
+            </div>
+            <div class="sub-actions">
+                <button class="sub-renew-btn" id="sub-renew-btn" onclick="renewWithDiscount()"></button>
+                <button class="sub-change-btn" id="sub-change-btn" onclick="changePlan()"></button>
+                <button class="sub-cancel-btn" onclick="cancelSubscription()">Cancel Subscription</button>
+            </div>
+        </div>
+
+        <!-- Saved Payment Methods -->
+        <div class="payment-methods-card">
+            <div class="balance-title">Saved Payment Methods</div>
+            <div id="saved-methods-container">
+                <div class="empty-text" id="empty-methods">No saved payment methods.</div>
+            </div>
+            <a href="/" class="manage-link">Manage in Store &#8250;</a>
+        </div>
+
+        <!-- Order History -->
+        <div class="orders-section">
+            <div class="section-title">Order History</div>
+            <div id="orders-container">
+                <div class="empty-text" id="empty-orders">No orders yet. Visit the store to get started.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Retention Discount Modal -->
+    <div class="retention-overlay" id="delete-method-modal">
+        <div class="retention-box">
+            <div class="retention-icon" style="border-color: #e53935; background: linear-gradient(135deg, rgba(229, 57, 53, 0.2), rgba(229, 57, 53, 0.05));">&#9888;</div>
+            <div class="retention-title">Remove Payment Method?</div>
+            <div class="retention-desc">After removal, your subscription will not be able to auto-renew. You will need to manually complete payment each time.</div>
+            <div class="retention-actions">
+                <button class="retention-decline-btn" onclick="closeDeleteMethodModal()">Keep Payment Method</button>
+                <button class="retention-accept-btn" style="background: linear-gradient(135deg, #e53935, #c62828);" onclick="confirmDeleteMethod()">Remove Anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="retention-overlay" id="retention-modal">
+        <div class="retention-box">
+            <div class="retention-icon">&#9819;</div>
+            <div class="retention-title">Wait! We have a special offer</div>
+            <div class="retention-desc">We'd hate to see you go. How about continuing your VIP with an exclusive discount?</div>
+            <div class="retention-offer">
+                <div class="retention-offer-label">Exclusive Offer</div>
+                <div class="retention-offer-plan" id="retention-plan-name"></div>
+                <div class="retention-offer-price">
+                    <span class="retention-original-price" id="retention-original-price"></span>
+                    <span class="retention-discount-price" id="retention-discount-price"></span>
+                    <span class="retention-discount-tag">-2%</span>
+                </div>
+            </div>
+            <div class="retention-actions">
+                <button class="retention-accept-btn" onclick="acceptRetentionOffer()">Accept Offer & Stay VIP</button>
+                <button class="retention-decline-btn" onclick="declineRetentionOffer()">No thanks, cancel anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const res = await fetch('/auth/me');
+                if (!res.ok) {
+                    window.location.href = '/login';
+                    return;
+                }
+                const user = await res.json();
+
+                // Header
+                const initial = user.username[0].toUpperCase();
+                document.getElementById('header-avatar').textContent = initial;
+                document.getElementById('header-username').textContent = user.username;
+
+                // Profile card
+                document.getElementById('profile-avatar').textContent = initial;
+                document.getElementById('username-display').textContent = user.username;
+                document.getElementById('member-since').textContent = new Date(user.createdAt).toLocaleDateString();
+
+                // Balance
+                document.getElementById('coins-balance').textContent = user.coins.toLocaleString();
+                document.getElementById('bonus-balance').textContent = user.bonus.toLocaleString();
+
+                // VIP status
+                if (user.vipStatus) {
+                    document.getElementById('vip-badge').classList.add('show');
+                    document.getElementById('vip-plan').textContent =
+                        user.vipStatus.plan === 'weekly_vip' ? 'Weekly VIP' : 'Yearly VIP';
+                    document.getElementById('vip-expiry').textContent =
+                        new Date(user.vipStatus.expiresAt).toLocaleDateString();
+
+                    // Subscription card
+                    renderSubscription(user.vipStatus);
+                }
+
+                // Load saved payment methods
+                const methodsRes = await fetch('/api/vault/payment-methods');
+                if (methodsRes.ok) {
+                    const methods = await methodsRes.json();
+                    renderSavedMethods(methods);
+                }
+
+                // Load orders
+                const ordersRes = await fetch('/api/user/orders');
+                if (ordersRes.ok) {
+                    const orders = await ordersRes.json();
+                    renderOrders(orders);
+                }
+            } catch (e) {
+                window.location.href = '/login';
+            }
+        }
+
+        function renderOrders(orders) {
+            if (!orders.length) return;
+
+            document.getElementById('empty-orders').style.display = 'none';
+            const container = document.getElementById('orders-container');
+
+            let html = '<table class="orders-table"><thead><tr>';
+            html += '<th>Date</th><th>Product</th><th>Amount</th><th>Coins</th><th>Bonus</th><th>Status</th>';
+            html += '</tr></thead><tbody>';
+
+            for (const order of orders) {
+                const date = new Date(order.createdAt).toLocaleDateString();
+                html += '<tr>';
+                html += `<td>${date}</td>`;
+                html += `<td>${order.productName}</td>`;
+                html += `<td>$${order.amount}</td>`;
+                html += `<td>${order.coinsAdded ? '+' + order.coinsAdded.toLocaleString() : '—'}</td>`;
+                html += `<td>${order.bonusAdded ? '+' + order.bonusAdded.toLocaleString() : '—'}</td>`;
+                html += `<td><span class="status-pill">${order.status}</span></td>`;
+                html += '</tr>';
+            }
+
+            html += '</tbody></table>';
+            container.innerHTML += html;
+        }
+
+        function renderSavedMethods(methods) {
+            if (!methods || !methods.length) return;
+
+            document.getElementById('empty-methods').style.display = 'none';
+            const container = document.getElementById('saved-methods-container');
+
+            let html = '';
+            for (const m of methods) {
+                const date = new Date(m.savedAt).toLocaleDateString();
+                const icon = m.type === 'card'
+                    ? `<span class="saved-method-icon card-icon">💳</span>`
+                    : `<span class="saved-method-icon"><span class="pp-pay">Pay</span><span class="pp-pal">Pal</span></span>`;
+                html += `<div class="saved-method-item">
+                    ${icon}
+                    <span class="saved-method-email">${m.email}</span>
+                    <span class="saved-method-date">Saved ${date}</span>
+                    <button class="saved-method-delete-btn" onclick="deleteMethod('${m.paymentTokenId}')">Delete</button>
+                </div>`;
+            }
+            container.innerHTML += html;
+        }
+
+        let pendingDeleteTokenId = null;
+
+        function deleteMethod(tokenId) {
+            pendingDeleteTokenId = tokenId;
+            document.getElementById('delete-method-modal').classList.add('show');
+        }
+
+        function closeDeleteMethodModal() {
+            document.getElementById('delete-method-modal').classList.remove('show');
+            pendingDeleteTokenId = null;
+        }
+
+        async function confirmDeleteMethod() {
+            if (!pendingDeleteTokenId) return;
+            try {
+                const res = await fetch('/api/vault/payment-methods/' + pendingDeleteTokenId, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.reload();
+                }
+            } catch (e) {
+                console.error('Delete error:', e);
+            }
+            closeDeleteMethodModal();
+        }
+
+        function renderSubscription(vipStatus) {
+            const isWeekly = vipStatus.plan === 'weekly_vip';
+            const planName = isWeekly ? 'Weekly VIP' : 'Yearly VIP';
+            const price = isWeekly ? '$19.99 / week' : '$199.99 / year';
+            const expiresAt = new Date(vipStatus.expiresAt);
+            const daysLeft = Math.max(0, Math.ceil((expiresAt - new Date()) / (1000 * 60 * 60 * 24)));
+            const altPlan = isWeekly ? 'Yearly VIP' : 'Weekly VIP';
+
+            document.getElementById('subscription-card').classList.add('show');
+            document.getElementById('sub-plan-name').textContent = planName;
+            document.getElementById('sub-price').textContent = price;
+            document.getElementById('sub-current-plan').textContent = planName;
+            document.getElementById('sub-expires').textContent = expiresAt.toLocaleDateString();
+            document.getElementById('sub-days-left').textContent = daysLeft + (daysLeft === 1 ? ' day' : ' days');
+
+            const changeBtn = document.getElementById('sub-change-btn');
+            changeBtn.textContent = 'Switch to ' + altPlan;
+            changeBtn.dataset.newPlan = isWeekly ? 'yearly_vip' : 'weekly_vip';
+
+            // Show renew button with 5% discount for weekly plan
+            const renewBtn = document.getElementById('sub-renew-btn');
+            if (isWeekly) {
+                const discountPrice = (19.99 * 0.95).toFixed(2);
+                renewBtn.innerHTML = 'Renew $' + discountPrice + '/week <span class="sub-renew-tag">-5%</span>';
+                renewBtn.classList.add('show');
+            } else {
+                renewBtn.classList.remove('show');
+            }
+        }
+
+        async function renewWithDiscount() {
+            if (!confirm('Renew Weekly VIP at $' + (19.99 * 0.95).toFixed(2) + '/week (5% off)?')) return;
+
+            try {
+                const res = await fetch('/api/subscription/renew-discount', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: 'weekly_vip', discountRate: 0.05 }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to renew');
+                }
+            } catch (e) {
+                console.error('Renew error:', e);
+                alert('Failed to renew');
+            }
+        }
+
+        async function changePlan() {
+            const btn = document.getElementById('sub-change-btn');
+            const newPlan = btn.dataset.newPlan;
+            const planName = newPlan === 'weekly_vip' ? 'Weekly VIP' : 'Yearly VIP';
+
+            if (!confirm('Switch to ' + planName + '? Your current subscription will be replaced.')) return;
+
+            try {
+                const res = await fetch('/api/subscription/change', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newPlan }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to change plan');
+                }
+            } catch (e) {
+                console.error('Change plan error:', e);
+                alert('Failed to change plan');
+            }
+        }
+
+        let currentPlanForRetention = null;
+
+        function cancelSubscription() {
+            // Show retention modal instead of canceling immediately
+            const planName = document.getElementById('sub-plan-name').textContent;
+            const isWeekly = planName.includes('Weekly');
+            currentPlanForRetention = isWeekly ? 'weekly_vip' : 'yearly_vip';
+
+            const originalPrice = isWeekly ? 19.99 : 199.99;
+            const discountPrice = (originalPrice * 0.98).toFixed(2);
+            const period = isWeekly ? '/ week' : '/ year';
+
+            document.getElementById('retention-plan-name').textContent = planName;
+            document.getElementById('retention-original-price').textContent = '$' + originalPrice.toFixed(2) + ' ' + period;
+            document.getElementById('retention-discount-price').textContent = '$' + discountPrice + ' ' + period;
+            document.getElementById('retention-modal').classList.add('show');
+        }
+
+        async function acceptRetentionOffer() {
+            try {
+                const res = await fetch('/api/subscription/renew-discount', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: currentPlanForRetention }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('retention-modal').classList.remove('show');
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to apply discount');
+                }
+            } catch (e) {
+                console.error('Retention offer error:', e);
+                alert('Failed to apply discount');
+            }
+        }
+
+        async function declineRetentionOffer() {
+            document.getElementById('retention-modal').classList.remove('show');
+
+            try {
+                const res = await fetch('/api/subscription/cancel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to cancel subscription');
+                }
+            } catch (e) {
+                console.error('Cancel subscription error:', e);
+                alert('Failed to cancel subscription');
+            }
+        }
+
+        async function handleLogout() {
+            await fetch('/auth/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+
+        loadProfile();
+    </script>
+
+</body>
+</html>

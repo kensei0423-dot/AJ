@@ -1,0 +1,2611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJCloud - Seller Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333333;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 40px;
+            background: #ffffff;
+            border-bottom: 3px solid #7ab648;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .logo .aj { color: #333; }
+        .logo .cloud { color: #7ab648; }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .header-title span {
+            color: #999;
+            font-weight: 400;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-link {
+            color: #888;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #7ab648; }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 40px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .stat-value.gold { color: #7ab648; }
+        .stat-value.green { color: #5a9a2e; }
+        .stat-value.blue { color: #2196f3; }
+        .stat-value.red { color: #e53935; }
+
+        /* Main */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px 60px;
+        }
+
+        /* User List */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .user-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .user-card:hover {
+            border-color: #ccc;
+        }
+
+        .user-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .user-card-header:hover {
+            background: #fafafa;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7ab648, #5a9a2e);
+            border: 2px solid #5a9a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .user-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .user-joined {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .user-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-vip {
+            background: rgba(122, 182, 72, 0.1);
+            border: 1px solid #7ab648;
+            color: #5a9a2e;
+        }
+
+        .badge-vault {
+            background: rgba(33, 150, 243, 0.08);
+            border: 1px solid #90caf9;
+            color: #1976d2;
+        }
+
+        .badge-no-vault {
+            background: rgba(128, 128, 128, 0.06);
+            border: 1px solid #ddd;
+            color: #999;
+        }
+
+        .badge-coins {
+            background: rgba(122, 182, 72, 0.08);
+            border: 1px solid #a5d67b;
+            color: #5a9a2e;
+        }
+
+        .user-stats-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-stat-item {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .user-stat-item strong {
+            color: #333;
+        }
+
+        .expand-arrow {
+            color: #999;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+
+        .user-card.expanded .expand-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Expandable Detail */
+        .user-detail {
+            display: none;
+            border-top: 1px solid #eee;
+        }
+
+        .user-card.expanded .user-detail {
+            display: block;
+        }
+
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            padding: 0 24px;
+        }
+
+        .detail-tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #999;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .detail-tab:hover {
+            color: #555;
+        }
+
+        .detail-tab.active {
+            color: #333;
+            border-bottom-color: #7ab648;
+        }
+
+        .detail-panel {
+            display: none;
+            padding: 20px 24px;
+        }
+
+        .detail-panel.active {
+            display: block;
+        }
+
+        /* PayPal Info Section */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .info-card {
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .info-card-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .info-card-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .info-card-value.muted {
+            color: #bbb;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        /* Saved Methods */
+        .saved-method-card {
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+        }
+
+        .saved-method-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .saved-method-email {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .paypal-icon {
+            width: 32px;
+            height: 32px;
+            background: #003087;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .saved-method-email-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .saved-method-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .saved-method-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .saved-method-field {
+            background: #f0f0f0;
+            border-radius: 6px;
+            padding: 10px 12px;
+        }
+
+        .saved-method-field-label {
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .saved-method-field-value {
+            font-size: 13px;
+            color: #555;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            word-break: break-all;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* Orders Table */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+        }
+
+        .orders-table td {
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #555;
+            border-bottom: 1px solid #eee;
+        }
+
+        .orders-table tr:hover td {
+            background: #f9f9f9;
+        }
+
+        .orders-table .order-id {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 12px;
+            color: #1976d2;
+        }
+
+        .orders-table .amount {
+            font-weight: 700;
+            color: #5a9a2e;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: rgba(122, 182, 72, 0.1);
+            color: #5a9a2e;
+        }
+
+        .orders-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            margin-top: 8px;
+            border-top: 1px solid #eee;
+        }
+
+        .orders-summary-item {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .orders-summary-item strong {
+            color: #7ab648;
+        }
+
+        /* Search */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 14px;
+            width: 280px;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: #7ab648;
+        }
+
+        .search-box svg {
+            width: 16px;
+            height: 16px;
+            fill: #999;
+            flex-shrink: 0;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            outline: none;
+            color: #333;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .search-box input::placeholder {
+            color: #bbb;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e0e0e0;
+            border-top-color: #7ab648;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        /* ─── Admin Tabs ─── */
+        .admin-tabs {
+            display: flex;
+            gap: 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fff;
+        }
+
+        .admin-tab {
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .admin-tab:hover { color: #555; }
+
+        .admin-tab.active {
+            color: #333;
+            border-bottom-color: #7ab648;
+        }
+
+        .admin-tab .tab-count {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #888;
+            font-size: 11px;
+            padding: 1px 7px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+
+        .admin-tab.active .tab-count {
+            background: rgba(122, 182, 72, 0.15);
+            color: #5a9a2e;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        /* ─── Disputes Section ─── */
+        .disputes-filters {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .filter-input {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 7px 12px;
+            color: #333;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-input:focus {
+            border-color: #7ab648;
+        }
+
+        .filter-input[type="date"] {
+            color-scheme: light;
+        }
+
+        .filter-select {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 7px 12px;
+            color: #333;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .filter-select:focus {
+            border-color: #7ab648;
+        }
+
+        .filter-btn {
+            padding: 7px 18px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            color: #555;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f0f0f0;
+            border-color: #ccc;
+            color: #333;
+        }
+
+        .filter-btn.primary {
+            background: #7ab648;
+            border-color: #7ab648;
+            color: #fff;
+        }
+
+        .filter-btn.primary:hover {
+            background: #5a9a2e;
+        }
+
+        .filter-divider {
+            width: 1px;
+            height: 28px;
+            background: #ddd;
+            margin: 0 4px;
+        }
+
+        /* Order ID search */
+        .order-search-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+
+        .order-search-row .search-icon {
+            width: 18px;
+            height: 18px;
+            fill: #999;
+            flex-shrink: 0;
+        }
+
+        .order-search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: #333;
+            font-size: 14px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        .order-search-input::placeholder {
+            color: #bbb;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .order-search-btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #7ab648;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .order-search-btn:hover {
+            background: #5a9a2e;
+        }
+
+        .order-search-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Order search result */
+        .order-search-result {
+            display: none;
+            margin-bottom: 20px;
+            padding: 18px 20px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+
+        .order-search-result.visible {
+            display: block;
+        }
+
+        .order-search-result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .order-search-result-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .order-search-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        .order-search-close:hover {
+            color: #333;
+        }
+
+        .order-result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .order-result-field {
+            background: #f5f5f5;
+            border-radius: 6px;
+            padding: 10px 12px;
+        }
+
+        .order-result-field-label {
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .order-result-field-value {
+            font-size: 13px;
+            color: #555;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            word-break: break-all;
+        }
+
+        .dispute-found {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .dispute-found.has-dispute {
+            background: rgba(229, 57, 53, 0.1);
+            border: 1px solid rgba(229, 57, 53, 0.3);
+            color: #f87171;
+        }
+
+        .dispute-found.no-dispute {
+            background: rgba(35, 134, 54, 0.1);
+            border: 1px solid rgba(35, 134, 54, 0.3);
+            color: #3fb950;
+        }
+
+        /* Disputes Table */
+        .disputes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .disputes-table th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+        }
+
+        .disputes-table td {
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #555;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        .disputes-table tr:hover td {
+            background: #f9f9f9;
+        }
+
+        .disputes-table .dispute-id-cell {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 12px;
+            color: #e53935;
+        }
+
+        .dispute-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .dispute-status-open,
+        .dispute-status-waiting_for_seller_response {
+            background: rgba(229, 57, 53, 0.08);
+            color: #e53935;
+        }
+
+        .dispute-status-waiting_for_buyer_response {
+            background: rgba(255, 152, 0, 0.08);
+            color: #f57c00;
+        }
+
+        .dispute-status-under_review {
+            background: rgba(33, 150, 243, 0.08);
+            color: #1976d2;
+        }
+
+        .dispute-status-resolved {
+            background: rgba(122, 182, 72, 0.08);
+            color: #5a9a2e;
+        }
+
+        .dispute-status-other {
+            background: rgba(128, 128, 128, 0.15);
+            color: #888;
+        }
+
+        .dispute-reason {
+            font-size: 12px;
+            color: #999;
+            max-width: 200px;
+        }
+
+        .dispute-amount {
+            font-weight: 700;
+            color: #f87171;
+        }
+
+        .dispute-txn-id {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 11px;
+            color: #888;
+            word-break: break-all;
+        }
+
+        .dispute-matched-user {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(122, 182, 72, 0.1);
+            border: 1px solid #7ab648;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #5a9a2e;
+        }
+
+        .disputes-empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: #999;
+        }
+
+        .disputes-empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        .disputes-count {
+            font-size: 13px;
+            color: #888;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #eee;
+        }
+
+        .disputes-count strong {
+            color: #333;
+        }
+
+        /* Detail modal */
+        .dispute-detail-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dispute-detail-modal.visible {
+            display: flex;
+        }
+
+        .dispute-detail-content {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 14px;
+            width: 720px;
+            max-width: 90vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 28px;
+        }
+
+        .dispute-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .dispute-detail-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .dispute-detail-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .dispute-detail-close:hover { color: #333; }
+
+        .dispute-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .dispute-detail-field {
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+
+        .dispute-detail-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .dispute-detail-field-label {
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .dispute-detail-field-value {
+            font-size: 13px;
+            color: #555;
+            word-break: break-all;
+        }
+
+        .dispute-messages {
+            margin-top: 16px;
+        }
+
+        .dispute-messages-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .dispute-message {
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+
+        .dispute-message-meta {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .dispute-message-text {
+            font-size: 13px;
+            color: #555;
+        }
+
+        /* Detail modal sections */
+        .dispute-section {
+            margin-bottom: 20px;
+        }
+
+        .dispute-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dispute-action-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 3px 4px 3px 0;
+            background: #1e293b;
+            color: #60a5fa;
+            border: 1px solid #334155;
+        }
+
+        .dispute-action-badge.respond {
+            background: #1c1917;
+            color: #f97316;
+            border-color: #431407;
+        }
+
+        .dispute-evidence-item {
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+
+        .dispute-evidence-type {
+            font-size: 11px;
+            color: #a78bfa;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .dispute-evidence-docs {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .dispute-offer-item {
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+
+        .dispute-offer-type {
+            font-size: 11px;
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .dispute-money-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .dispute-money-type {
+            color: #888;
+        }
+
+        .dispute-money-amount {
+            font-weight: 700;
+        }
+
+        .dispute-money-amount.credit { color: #4ade80; }
+        .dispute-money-amount.debit { color: #f87171; }
+
+        .dispute-due-date {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .dispute-link-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .dispute-link-item {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            background: #1a1a2e;
+            color: #818cf8;
+            border: 1px solid #2d2d5f;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <a href="/" class="logo"><span class="aj">AJ</span><span class="cloud">CLOUD</span></a>
+            <div class="header-title">
+                Seller Admin
+                <span>Dashboard</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="/" class="back-link">Back to Store</a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="stats-bar">
+        <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" id="stat-users">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value gold" id="stat-revenue">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active VIP</div>
+            <div class="stat-value green" id="stat-vip">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Saved Payment Methods</div>
+            <div class="stat-value blue" id="stat-vault">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Orders Initiated</div>
+            <div class="stat-value" id="stat-order-initiated">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Orders Success</div>
+            <div class="stat-value green" id="stat-order-success">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Orders Failed</div>
+            <div class="stat-value red" id="stat-order-failed">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Success Rate</div>
+            <div class="stat-value green" id="stat-order-rate">--</div>
+        </div>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('users', this)">
+            Users <span class="tab-count" id="tab-count-users">--</span>
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('disputes', this)">
+            Disputes <span class="tab-count" id="tab-count-disputes">--</span>
+        </button>
+    </div>
+
+    <!-- Main -->
+    <div class="main-content">
+        <!-- Users Section -->
+        <div class="admin-section active" id="section-users">
+            <div class="toolbar" style="margin-top: 20px;">
+                <div class="section-title">Users</div>
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    <input type="text" id="search-input" placeholder="Search users..." oninput="filterUsers()">
+                </div>
+            </div>
+            <div class="user-list" id="user-list">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading users...
+                </div>
+            </div>
+        </div>
+
+        <!-- Disputes Section -->
+        <div class="admin-section" id="section-disputes">
+            <!-- Search -->
+            <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                <!-- Order ID Search -->
+                <div>
+                    <div class="section-title" style="margin-bottom: 14px;">Search by Order ID</div>
+                    <div class="order-search-row">
+                        <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        <input type="text" class="order-search-input" id="order-search-input" placeholder="e.g. 15369036YJ3074458" onkeydown="if(event.key==='Enter')searchOrderDispute()">
+                        <button class="order-search-btn" id="order-search-btn" onclick="searchOrderDispute()">Search</button>
+                    </div>
+                </div>
+                <!-- Case ID Search -->
+                <div>
+                    <div class="section-title" style="margin-bottom: 14px;">Search by Case ID</div>
+                    <div class="order-search-row">
+                        <svg class="search-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 9h-2v2c0 .55-.45 1-1 1s-1-.45-1-1v-2H7c-.55 0-1-.45-1-1s.45-1 1-1h2V7c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1s-.45 1-1 1zm-1-6V3.5L16.5 8H12z"/></svg>
+                        <input type="text" class="order-search-input" id="case-search-input" placeholder="e.g. PP-D-12345" onkeydown="if(event.key==='Enter')searchCaseId()">
+                        <button class="order-search-btn" id="case-search-btn" onclick="searchCaseId()">Search</button>
+                    </div>
+                </div>
+                <!-- Transaction ID Search -->
+                <div>
+                    <div class="section-title" style="margin-bottom: 14px;">Search by Transaction ID</div>
+                    <div class="order-search-row">
+                        <svg class="search-icon" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14c1.1 0 2 .9 2 2v1h-9a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <input type="text" class="order-search-input" id="txn-search-input" placeholder="e.g. 1RG78758WE8388359" onkeydown="if(event.key==='Enter')searchTransactionId()">
+                        <button class="order-search-btn" id="txn-search-btn" onclick="searchTransactionId()">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="order-search-result" id="order-search-result"></div>
+            <div class="order-search-result" id="case-search-result"></div>
+            <div class="order-search-result" id="txn-search-result"></div>
+
+            <!-- Dispute Filters -->
+            <div style="margin-top: 28px;">
+                <div class="section-title" style="margin-bottom: 14px;">All Disputes</div>
+                <div class="disputes-filters">
+                    <div class="filter-group">
+                        <span class="filter-label">From</span>
+                        <input type="date" class="filter-input" id="filter-start-date">
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">To</span>
+                        <input type="date" class="filter-input" id="filter-end-date">
+                    </div>
+                    <div class="filter-divider"></div>
+                    <div class="filter-group">
+                        <span class="filter-label">Status</span>
+                        <select class="filter-select" id="filter-dispute-state">
+                            <option value="">All</option>
+                            <option value="OPEN">Open</option>
+                            <option value="WAITING_FOR_SELLER_RESPONSE">Waiting for Seller</option>
+                            <option value="WAITING_FOR_BUYER_RESPONSE">Waiting for Buyer</option>
+                            <option value="UNDER_REVIEW">Under Review</option>
+                            <option value="RESOLVED">Resolved</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+                    <div class="filter-divider"></div>
+                    <button class="filter-btn primary" onclick="loadDisputes()">Search</button>
+                    <button class="filter-btn" onclick="resetDisputeFilters()">Reset</button>
+                </div>
+            </div>
+
+            <!-- Disputes List -->
+            <div id="disputes-list">
+                <div class="disputes-empty">
+                    <div class="disputes-empty-icon">&#9878;</div>
+                    <div>Click <strong>Search</strong> to load disputes from PayPal</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dispute Detail Modal -->
+    <div class="dispute-detail-modal" id="dispute-detail-modal">
+        <div class="dispute-detail-content" id="dispute-detail-content"></div>
+    </div>
+
+    <script>
+        let allUsers = [];
+        let allDisputes = [];
+
+        // ─── Admin Tab Switching ───
+        function switchAdminTab(tab, btn) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + tab).classList.add('active');
+        }
+
+        // ─── Users ───
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                allUsers = await res.json();
+                renderStats();
+                renderUsers(allUsers);
+                document.getElementById('tab-count-users').textContent = allUsers.length;
+            } catch (err) {
+                document.getElementById('user-list').innerHTML =
+                    '<div class="no-data">Failed to load users: ' + err.message + '</div>';
+            }
+        }
+
+        function renderStats() {
+            document.getElementById('stat-users').textContent = allUsers.length;
+
+            const totalRevenue = allUsers.reduce((sum, u) =>
+                sum + (u.orders || []).reduce((s, o) => s + parseFloat(o.amount || 0), 0), 0);
+            document.getElementById('stat-revenue').textContent = '$' + totalRevenue.toFixed(2);
+
+            const activeVip = allUsers.filter(u => u.vipStatus && new Date(u.vipStatus.expiresAt) > new Date()).length;
+            document.getElementById('stat-vip').textContent = activeVip;
+
+            const vaultCount = allUsers.reduce((sum, u) => sum + (u.savedPaymentMethods || []).length, 0);
+            document.getElementById('stat-vault').textContent = vaultCount;
+        }
+
+        async function loadOrderStats() {
+            try {
+                const res = await fetch('/api/admin/order-stats');
+                const data = await res.json();
+                document.getElementById('stat-order-initiated').textContent = data.initiated;
+                document.getElementById('stat-order-success').textContent = data.success;
+                document.getElementById('stat-order-failed').textContent = data.failed;
+                document.getElementById('stat-order-rate').textContent = data.rate + '%';
+            } catch (err) {
+                console.error('Failed to load order stats:', err);
+            }
+        }
+
+        function renderUsers(users) {
+            const container = document.getElementById('user-list');
+            if (users.length === 0) {
+                container.innerHTML = '<div class="no-data">No users found</div>';
+                return;
+            }
+
+            container.innerHTML = users.map((user, idx) => {
+                const orders = user.orders || [];
+                const saved = user.savedPaymentMethods || [];
+                const totalSpent = orders.reduce((s, o) => s + parseFloat(o.amount || 0), 0);
+                const vipActive = user.vipStatus && new Date(user.vipStatus.expiresAt) > new Date();
+                const initial = user.username.charAt(0).toUpperCase();
+
+                return `
+                <div class="user-card" id="user-${idx}">
+                    <div class="user-card-header" onclick="toggleUser(${idx})">
+                        <div class="user-info">
+                            <div class="user-avatar">${initial}</div>
+                            <div class="user-meta">
+                                <div class="user-name">${user.username}</div>
+                                <div class="user-joined">Joined ${formatDate(user.createdAt)}</div>
+                            </div>
+                        </div>
+                        <div class="user-stats-row">
+                            ${vipActive
+                                ? `<span class="badge badge-vip">${user.vipStatus.plan === 'weekly_vip' ? 'Weekly VIP' : 'Yearly VIP'}${user.vipStatus.discount ? ' (' + (user.vipStatus.discount * 100) + '% off)' : ''}</span>`
+                                : ''}
+                            ${saved.length > 0
+                                ? `<span class="badge badge-vault">Vault (${saved.length})</span>`
+                                : `<span class="badge badge-no-vault">No Vault</span>`}
+                            <span class="badge badge-coins">${user.coins.toLocaleString()} devices</span>
+                            <span class="user-stat-item"><strong>${orders.length}</strong> orders</span>
+                            <span class="user-stat-item"><strong>$${totalSpent.toFixed(2)}</strong> spent</span>
+                            <span class="expand-arrow">&#9662;</span>
+                        </div>
+                    </div>
+                    <div class="user-detail">
+                        <div class="detail-tabs">
+                            <button class="detail-tab active" onclick="switchTab(${idx}, 'paypal', this)">PayPal Info</button>
+                            <button class="detail-tab" onclick="switchTab(${idx}, 'vault', this)">Saved Methods</button>
+                            <button class="detail-tab" onclick="switchTab(${idx}, 'orders', this)">Transactions (${orders.length})</button>
+                        </div>
+                        ${renderPayPalPanel(user, idx)}
+                        ${renderVaultPanel(user, idx)}
+                        ${renderOrdersPanel(user, idx)}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderPayPalPanel(user, idx) {
+            const saved = user.savedPaymentMethods || [];
+            const orders = user.orders || [];
+            const totalSpent = orders.reduce((s, o) => s + parseFloat(o.amount || 0), 0);
+            const vipActive = user.vipStatus && new Date(user.vipStatus.expiresAt) > new Date();
+            const hasSaved = saved.length > 0;
+
+            const email = hasSaved ? saved[0].email : 'N/A';
+            const customerId = hasSaved ? saved[0].customerId : 'N/A';
+
+            return `
+            <div class="detail-panel active" data-user="${idx}" data-tab="paypal">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-label">PayPal Email</div>
+                        <div class="info-card-value ${!hasSaved ? 'muted' : ''}">${email}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">Customer ID</div>
+                        <div class="info-card-value ${!hasSaved ? 'muted' : ''}">${customerId}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">Account Balance</div>
+                        <div class="info-card-value">${user.coins.toLocaleString()} devices + ${user.bonus.toLocaleString()} GB storage</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">Total Spent</div>
+                        <div class="info-card-value">$${totalSpent.toFixed(2)} (${orders.length} orders)</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">VIP Status</div>
+                        <div class="info-card-value ${!vipActive ? 'muted' : ''}">${vipActive
+                            ? `${user.vipStatus.plan} &mdash; expires ${formatDate(user.vipStatus.expiresAt)}${user.vipStatus.discount ? ' (discount: ' + (user.vipStatus.discount * 100) + '%)' : ''}`
+                            : 'Not active'}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label">Save Payment Method</div>
+                        <div class="info-card-value ${!hasSaved ? 'muted' : ''}">${hasSaved
+                            ? `Enabled (${saved.length} method${saved.length > 1 ? 's' : ''})`
+                            : 'Not enabled'}</div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderVaultPanel(user, idx) {
+            const saved = user.savedPaymentMethods || [];
+
+            if (saved.length === 0) {
+                return `
+                <div class="detail-panel" data-user="${idx}" data-tab="vault">
+                    <div class="no-data">No saved payment methods</div>
+                </div>`;
+            }
+
+            return `
+            <div class="detail-panel" data-user="${idx}" data-tab="vault">
+                ${saved.map(m => `
+                    <div class="saved-method-card">
+                        <div class="saved-method-header">
+                            <div class="saved-method-email">
+                                <div class="paypal-icon">PP</div>
+                                <div>
+                                    <div class="saved-method-email-text">${m.email}</div>
+                                    <div class="saved-method-date">Saved ${formatDate(m.savedAt)}</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-vault">Active</span>
+                        </div>
+                        <div class="saved-method-details">
+                            <div class="saved-method-field">
+                                <div class="saved-method-field-label">Payment Token ID</div>
+                                <div class="saved-method-field-value">${m.paymentTokenId}</div>
+                            </div>
+                            <div class="saved-method-field">
+                                <div class="saved-method-field-label">Customer ID</div>
+                                <div class="saved-method-field-value">${m.customerId || 'N/A'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>`;
+        }
+
+        function renderOrdersPanel(user, idx) {
+            const orders = user.orders || [];
+
+            if (orders.length === 0) {
+                return `
+                <div class="detail-panel" data-user="${idx}" data-tab="orders">
+                    <div class="no-data">No transactions yet</div>
+                </div>`;
+            }
+
+            const totalSpent = orders.reduce((s, o) => s + parseFloat(o.amount || 0), 0);
+            const deviceOrders = orders.filter(o => (o.devicesAdded || 0) > 0);
+            const storageOrders = orders.filter(o => (o.storageAdded || 0) > 0);
+
+            return `
+            <div class="detail-panel" data-user="${idx}" data-tab="orders">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Credits</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orders.map(o => `
+                            <tr>
+                                <td class="order-id">${o.id}</td>
+                                <td>${o.productName}</td>
+                                <td class="amount">$${parseFloat(o.amount).toFixed(2)}</td>
+                                <td>${(o.devicesAdded || 0) > 0 ? '+' + o.devicesAdded + ' devices' : (o.storageAdded || 0) > 0 ? '+' + o.storageAdded + ' GB' : '&mdash;'}</td>
+                                <td><span class="status-badge status-completed">${o.status}</span></td>
+                                <td>${formatDateTime(o.createdAt)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <div class="orders-summary">
+                    <span class="orders-summary-item">Total: <strong>$${totalSpent.toFixed(2)}</strong></span>
+                    <span class="orders-summary-item">Subscriptions: <strong>${deviceOrders.length}</strong></span>
+                    <span class="orders-summary-item">Traffic packs: <strong>${storageOrders.length}</strong></span>
+                </div>
+            </div>`;
+        }
+
+        function toggleUser(idx) {
+            const card = document.getElementById('user-' + idx);
+            card.classList.toggle('expanded');
+        }
+
+        function switchTab(idx, tab, btn) {
+            const card = document.getElementById('user-' + idx);
+            card.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            card.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
+            card.querySelector(`.detail-panel[data-tab="${tab}"]`).classList.add('active');
+        }
+
+        function filterUsers() {
+            const q = document.getElementById('search-input').value.toLowerCase().trim();
+            if (!q) {
+                renderUsers(allUsers);
+                return;
+            }
+            const filtered = allUsers.filter(u => {
+                if (u.username.toLowerCase().includes(q)) return true;
+                const saved = u.savedPaymentMethods || [];
+                if (saved.some(m => m.email.toLowerCase().includes(q))) return true;
+                if (saved.some(m => (m.paymentTokenId || '').toLowerCase().includes(q))) return true;
+                if (saved.some(m => (m.customerId || '').toLowerCase().includes(q))) return true;
+                return false;
+            });
+            renderUsers(filtered);
+        }
+
+        function formatDate(iso) {
+            if (!iso) return 'N/A';
+            const d = new Date(iso);
+            return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function formatDateTime(iso) {
+            if (!iso) return 'N/A';
+            const d = new Date(iso);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        // ─── Disputes ───
+
+        async function loadDisputes() {
+            const container = document.getElementById('disputes-list');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading disputes from PayPal...</div>';
+
+            const params = new URLSearchParams();
+            const startDate = document.getElementById('filter-start-date').value;
+            const endDate = document.getElementById('filter-end-date').value;
+            const state = document.getElementById('filter-dispute-state').value;
+
+            // Map status filter value to PayPal API dispute_state parameter.
+            // The dropdown uses "status" field values; PayPal API queries by "dispute_state".
+            const statusToDisputeState = {
+                'OPEN': 'OPEN',
+                'WAITING_FOR_SELLER_RESPONSE': 'REQUIRED_ACTION',
+                'WAITING_FOR_BUYER_RESPONSE': 'REQUIRED_OTHER_PARTY_ACTION',
+                'UNDER_REVIEW': 'UNDER_REVIEW',
+                'RESOLVED': 'RESOLVED',
+                'OTHER': 'OTHER'
+            };
+
+            // For RESOLVED, PayPal API start_time filters by create_time,
+            // but resolved disputes may have been created long ago.
+            // Skip date params for API and filter by update_time client-side.
+            const useClientDateFilter = (state === 'RESOLVED');
+
+            if (startDate && !useClientDateFilter) {
+                params.append('start_time', new Date(startDate).toISOString());
+            }
+            if (endDate && !useClientDateFilter) {
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+                params.append('end_time', end.toISOString());
+            }
+
+            if (state && statusToDisputeState[state]) {
+                params.append('dispute_state', statusToDisputeState[state]);
+            }
+
+            try {
+                const res = await fetch('/api/admin/disputes?' + params.toString());
+                const data = await res.json();
+
+                if (data.error) {
+                    container.innerHTML = '<div class="no-data">Error: ' + data.error + '</div>';
+                    return;
+                }
+
+                allDisputes = data.items || [];
+
+                // Client-side filter by status field (always apply since
+                // dispute_state and status don't always map 1:1)
+                if (state) {
+                    allDisputes = allDisputes.filter(d => d.status === state);
+                }
+
+                // Client-side date filter using update_time (for RESOLVED disputes)
+                if (useClientDateFilter) {
+                    if (startDate) {
+                        const startMs = new Date(startDate).getTime();
+                        allDisputes = allDisputes.filter(d => new Date(d.update_time).getTime() >= startMs);
+                    }
+                    if (endDate) {
+                        const end = new Date(endDate);
+                        end.setHours(23, 59, 59, 999);
+                        const endMs = end.getTime();
+                        allDisputes = allDisputes.filter(d => new Date(d.update_time).getTime() <= endMs);
+                    }
+                }
+
+                document.getElementById('tab-count-disputes').textContent = allDisputes.length;
+                renderDisputes(allDisputes, allDisputes.length);
+            } catch (err) {
+                container.innerHTML = '<div class="no-data">Failed to load disputes: ' + err.message + '</div>';
+            }
+        }
+
+        function renderDisputes(disputes, totalItems) {
+            const container = document.getElementById('disputes-list');
+
+            if (disputes.length === 0) {
+                container.innerHTML = `
+                    <div class="disputes-empty">
+                        <div class="disputes-empty-icon">&#10003;</div>
+                        <div>No disputes found for the selected filters</div>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="disputes-table">
+                    <thead>
+                        <tr>
+                            <th>Dispute ID</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Transaction</th>
+                            <th>User</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${disputes.map(d => {
+                            const txns = d.disputed_transactions || [];
+                            const txnId = txns.length > 0 ? (txns[0].seller_transaction_id || txns[0].buyer_transaction_id || '') : '';
+                            const statusClass = getDisputeStatusClass(d.status);
+                            const amount = d.dispute_amount ? '$' + d.dispute_amount.value : '--';
+                            const reason = formatDisputeReason(d.reason);
+
+                            return `
+                            <tr onclick="showDisputeDetail('${d.dispute_id}')" style="cursor:pointer;">
+                                <td class="dispute-id-cell">${d.dispute_id}</td>
+                                <td class="dispute-reason">${reason}</td>
+                                <td><span class="dispute-status ${statusClass}">${formatDisputeStatus(d.status)}</span></td>
+                                <td class="dispute-amount">${amount}</td>
+                                <td class="dispute-txn-id">${txnId || '--'}</td>
+                                <td>${d.matchedUser ? '<span class="dispute-matched-user">' + d.matchedUser + '</span>' : '<span style="color:#555">--</span>'}</td>
+                                <td>${formatDate(d.create_time)}</td>
+                                <td>${formatDate(d.update_time)}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+                <div class="disputes-count">
+                    Showing <strong>${disputes.length}</strong> of <strong>${totalItems || disputes.length}</strong> disputes
+                </div>`;
+        }
+
+        function resetDisputeFilters() {
+            document.getElementById('filter-start-date').value = '';
+            document.getElementById('filter-end-date').value = '';
+            document.getElementById('filter-dispute-state').value = '';
+        }
+
+        // ─── Order ID Search ───
+
+        async function searchOrderDispute() {
+            const orderId = document.getElementById('order-search-input').value.trim();
+            if (!orderId) return;
+
+            const btn = document.getElementById('order-search-btn');
+            const resultDiv = document.getElementById('order-search-result');
+            btn.disabled = true;
+            btn.textContent = 'Searching...';
+            resultDiv.className = 'order-search-result visible';
+            resultDiv.innerHTML = '<div class="loading" style="padding:20px;"><div class="spinner"></div>Looking up order and checking disputes...</div>';
+
+            try {
+                const res = await fetch('/api/admin/disputes/search/order/' + encodeURIComponent(orderId));
+                const data = await res.json();
+
+                if (data.error) {
+                    resultDiv.innerHTML = `
+                        <div class="order-search-result-header">
+                            <div class="order-search-result-title">Search Result</div>
+                            <button class="order-search-close" onclick="closeOrderSearch()">&times;</button>
+                        </div>
+                        <div class="dispute-found has-dispute">Error: ${data.error}</div>`;
+                    return;
+                }
+
+                const order = data.order || {};
+                const disputes = data.items || [];
+                const captureIds = data.captureIds || [];
+                const status = order.status || 'UNKNOWN';
+
+                // Find which local user this order belongs to
+                let orderUser = null;
+                allUsers.forEach(u => {
+                    if ((u.orders || []).some(o => o.id === orderId)) {
+                        orderUser = u.username;
+                    }
+                });
+
+                const amount = order.purchase_units?.[0]?.amount?.value || '--';
+                const currency = order.purchase_units?.[0]?.amount?.currency_code || 'USD';
+                const payerEmail = order.payment_source?.paypal?.email_address || order.payer?.email_address || '--';
+
+                resultDiv.innerHTML = `
+                    <div class="order-search-result-header">
+                        <div class="order-search-result-title">Order: ${orderId}</div>
+                        <button class="order-search-close" onclick="closeOrderSearch()">&times;</button>
+                    </div>
+                    <div class="order-result-grid">
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Order Status</div>
+                            <div class="order-result-field-value">${status}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Amount</div>
+                            <div class="order-result-field-value">${currency} ${amount}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Payer</div>
+                            <div class="order-result-field-value">${payerEmail}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Capture ID(s)</div>
+                            <div class="order-result-field-value">${captureIds.length > 0 ? captureIds.join(', ') : '--'}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Local User</div>
+                            <div class="order-result-field-value">${orderUser || '--'}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Disputes Found</div>
+                            <div class="order-result-field-value">${disputes.length}</div>
+                        </div>
+                    </div>
+                    ${disputes.length > 0
+                        ? `<div class="dispute-found has-dispute">
+                              &#9888; ${disputes.length} dispute(s) found for this order
+                           </div>
+                           <table class="disputes-table" style="margin-top:14px;">
+                               <thead>
+                                   <tr>
+                                       <th>Dispute ID</th>
+                                       <th>Reason</th>
+                                       <th>Status</th>
+                                       <th>Amount</th>
+                                       <th>Created</th>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                   ${disputes.map(d => `
+                                       <tr onclick="showDisputeDetail('${d.dispute_id}')" style="cursor:pointer;">
+                                           <td class="dispute-id-cell">${d.dispute_id}</td>
+                                           <td class="dispute-reason">${formatDisputeReason(d.reason)}</td>
+                                           <td><span class="dispute-status ${getDisputeStatusClass(d.status)}">${formatDisputeStatus(d.status)}</span></td>
+                                           <td class="dispute-amount">${d.dispute_amount ? '$' + d.dispute_amount.value : '--'}</td>
+                                           <td>${formatDate(d.create_time)}</td>
+                                       </tr>
+                                   `).join('')}
+                               </tbody>
+                           </table>`
+                        : `<div class="dispute-found no-dispute">&#10003; No disputes found for this order</div>`
+                    }`;
+            } catch (err) {
+                resultDiv.innerHTML = `
+                    <div class="order-search-result-header">
+                        <div class="order-search-result-title">Search Result</div>
+                        <button class="order-search-close" onclick="closeOrderSearch()">&times;</button>
+                    </div>
+                    <div class="dispute-found has-dispute">Error: ${err.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Search';
+            }
+        }
+
+        function closeOrderSearch() {
+            document.getElementById('order-search-result').className = 'order-search-result';
+        }
+
+        // ─── Case ID Search ───
+
+        async function searchCaseId() {
+            const caseId = document.getElementById('case-search-input').value.trim();
+            if (!caseId) return;
+
+            const btn = document.getElementById('case-search-btn');
+            const resultDiv = document.getElementById('case-search-result');
+            btn.disabled = true;
+            btn.textContent = 'Searching...';
+            resultDiv.className = 'order-search-result visible';
+            resultDiv.innerHTML = '<div class="loading" style="padding:20px;"><div class="spinner"></div>Looking up case...</div>';
+
+            try {
+                const res = await fetch('/api/admin/disputes/' + encodeURIComponent(caseId));
+                const d = await res.json();
+
+                if (d.error || d.name === 'RESOURCE_NOT_FOUND') {
+                    resultDiv.innerHTML = `
+                        <div class="order-search-result-header">
+                            <div class="order-search-result-title">Case: ${caseId}</div>
+                            <button class="order-search-close" onclick="closeCaseSearch()">&times;</button>
+                        </div>
+                        <div class="dispute-found has-dispute">${d.message || d.error || 'Case not found'}</div>`;
+                    return;
+                }
+
+                const txns = d.disputed_transactions || [];
+                const amount = d.dispute_amount ? d.dispute_amount.currency_code + ' ' + d.dispute_amount.value : '--';
+                const statusClass = getDisputeStatusClass(d.status);
+
+                resultDiv.innerHTML = `
+                    <div class="order-search-result-header">
+                        <div class="order-search-result-title">Case: ${d.dispute_id}</div>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <a href="https://www.sandbox.paypal.com/resolutioncenter/view/${d.dispute_id}/inquiry" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:6px;background:#003087;color:#fff;font-size:12px;font-weight:600;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#0050b3'" onmouseout="this.style.background='#003087'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                PayPal Resolution Center
+                            </a>
+                            <button class="order-search-close" onclick="closeCaseSearch()">&times;</button>
+                        </div>
+                    </div>
+                    <div class="order-result-grid">
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Status</div>
+                            <div class="order-result-field-value"><span class="dispute-status ${statusClass}">${formatDisputeStatus(d.status)}</span></div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Amount</div>
+                            <div class="order-result-field-value" style="color:#f87171;font-weight:700;">${amount}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Reason</div>
+                            <div class="order-result-field-value">${formatDisputeReason(d.reason)}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Life Cycle Stage</div>
+                            <div class="order-result-field-value">${d.dispute_life_cycle_stage || '--'}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Created</div>
+                            <div class="order-result-field-value">${formatDateTime(d.create_time)}</div>
+                        </div>
+                        <div class="order-result-field">
+                            <div class="order-result-field-label">Updated</div>
+                            <div class="order-result-field-value">${formatDateTime(d.update_time)}</div>
+                        </div>
+                    </div>
+                    ${txns.length > 0 ? `
+                    <div style="margin-top:4px;">
+                        <div class="order-result-field-label" style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Disputed Transactions</div>
+                        <table class="disputes-table">
+                            <thead>
+                                <tr>
+                                    <th>Seller Transaction ID</th>
+                                    <th>Buyer Transaction ID</th>
+                                    <th>Amount</th>
+                                    <th>Buyer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${txns.map(t => `
+                                    <tr>
+                                        <td class="dispute-txn-id">${t.seller_transaction_id || '--'}</td>
+                                        <td class="dispute-txn-id">${t.buyer_transaction_id || '--'}</td>
+                                        <td>${t.gross_amount ? t.gross_amount.currency_code + ' ' + t.gross_amount.value : '--'}</td>
+                                        <td>${t.buyer?.name || t.buyer?.email || '--'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>` : ''}
+                    ${(d.messages || []).length > 0 ? `
+                    <div class="dispute-messages" style="margin-top:14px;">
+                        <div class="dispute-messages-title">Messages (${d.messages.length})</div>
+                        ${d.messages.map(m => `
+                            <div class="dispute-message">
+                                <div class="dispute-message-meta">${m.posted_by || 'Unknown'} &mdash; ${formatDateTime(m.time_posted)}</div>
+                                <div class="dispute-message-text">${m.content || ''}</div>
+                            </div>
+                        `).join('')}
+                    </div>` : ''}`;
+            } catch (err) {
+                resultDiv.innerHTML = `
+                    <div class="order-search-result-header">
+                        <div class="order-search-result-title">Case: ${caseId}</div>
+                        <button class="order-search-close" onclick="closeCaseSearch()">&times;</button>
+                    </div>
+                    <div class="dispute-found has-dispute">Error: ${err.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Search';
+            }
+        }
+
+        function closeCaseSearch() {
+            document.getElementById('case-search-result').className = 'order-search-result';
+        }
+
+        // ─── Transaction ID Search ───
+
+        async function searchTransactionId() {
+            const txnId = document.getElementById('txn-search-input').value.trim();
+            if (!txnId) return;
+
+            const btn = document.getElementById('txn-search-btn');
+            const resultDiv = document.getElementById('txn-search-result');
+            btn.disabled = true;
+            btn.textContent = 'Searching...';
+            resultDiv.className = 'order-search-result visible';
+            resultDiv.innerHTML = '<div class="loading" style="padding:20px;"><div class="spinner"></div>Searching disputes by transaction ID...</div>';
+
+            try {
+                const res = await fetch('/api/admin/disputes?disputed_transaction_id=' + encodeURIComponent(txnId));
+                const data = await res.json();
+
+                if (data.error) {
+                    resultDiv.innerHTML = `
+                        <div class="order-search-result-header">
+                            <div class="order-search-result-title">Transaction: ${txnId}</div>
+                            <button class="order-search-close" onclick="closeTxnSearch()">&times;</button>
+                        </div>
+                        <div class="dispute-found has-dispute">Error: ${data.error}</div>`;
+                    return;
+                }
+
+                const disputes = data.items || [];
+
+                // Try to find matching local user
+                let txnUser = null;
+                allUsers.forEach(u => {
+                    (u.orders || []).forEach(o => {
+                        if (o.id === txnId || o.captureId === txnId) {
+                            txnUser = u.username;
+                        }
+                    });
+                });
+
+                if (disputes.length === 0) {
+                    resultDiv.innerHTML = `
+                        <div class="order-search-result-header">
+                            <div class="order-search-result-title">Transaction: ${txnId}</div>
+                            <button class="order-search-close" onclick="closeTxnSearch()">&times;</button>
+                        </div>
+                        <div class="dispute-found no-dispute">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#4ade80"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            No disputes found for this transaction
+                            ${txnUser ? ' <span style="color:#888;">(User: <span class="dispute-matched-user">' + txnUser + '</span>)</span>' : ''}
+                        </div>`;
+                    return;
+                }
+
+                resultDiv.innerHTML = `
+                    <div class="order-search-result-header">
+                        <div class="order-search-result-title">Transaction: ${txnId}</div>
+                        <button class="order-search-close" onclick="closeTxnSearch()">&times;</button>
+                    </div>
+                    <div class="dispute-found has-dispute">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#f87171"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                        ${disputes.length} dispute${disputes.length > 1 ? 's' : ''} found
+                        ${txnUser ? ' <span style="color:#888;">(User: <span class="dispute-matched-user">' + txnUser + '</span>)</span>' : ''}
+                    </div>
+                    <table class="disputes-table" style="margin-top:12px;">
+                        <thead>
+                            <tr>
+                                <th>Dispute ID</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${disputes.map(d => {
+                                const statusClass = getDisputeStatusClass(d.status);
+                                const amount = d.dispute_amount ? '$' + d.dispute_amount.value : '--';
+                                return `
+                                <tr onclick="showDisputeDetail('${d.dispute_id}')" style="cursor:pointer;">
+                                    <td class="dispute-id-cell">${d.dispute_id}</td>
+                                    <td class="dispute-reason">${formatDisputeReason(d.reason)}</td>
+                                    <td><span class="dispute-status ${statusClass}">${formatDisputeStatus(d.status)}</span></td>
+                                    <td class="dispute-amount">${amount}</td>
+                                    <td>${formatDate(d.create_time)}</td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>`;
+            } catch (err) {
+                resultDiv.innerHTML = `
+                    <div class="order-search-result-header">
+                        <div class="order-search-result-title">Transaction: ${txnId}</div>
+                        <button class="order-search-close" onclick="closeTxnSearch()">&times;</button>
+                    </div>
+                    <div class="dispute-found has-dispute">Error: ${err.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Search';
+            }
+        }
+
+        function closeTxnSearch() {
+            document.getElementById('txn-search-result').className = 'order-search-result';
+        }
+
+        // ─── Dispute Detail Modal ───
+
+        async function showDisputeDetail(disputeId) {
+            const modal = document.getElementById('dispute-detail-modal');
+            const content = document.getElementById('dispute-detail-content');
+            modal.classList.add('visible');
+            content.innerHTML = '<div class="loading"><div class="spinner"></div>Loading dispute details...</div>';
+
+            try {
+                const res = await fetch('/api/admin/disputes/' + encodeURIComponent(disputeId));
+                const d = await res.json();
+
+                if (d.error) {
+                    content.innerHTML = `
+                        <div class="dispute-detail-header">
+                            <div class="dispute-detail-title">Error</div>
+                            <button class="dispute-detail-close" onclick="closeDisputeDetail()">&times;</button>
+                        </div>
+                        <div class="no-data">${d.error}</div>`;
+                    return;
+                }
+
+                const txns = d.disputed_transactions || [];
+                const messages = d.messages || [];
+                const evidences = d.evidences || [];
+                const offer = d.offer || null;
+                const offerHistory = d.offer_history || [];
+                const moneyMovements = d.money_movements || [];
+                const sellerActions = (d.links || []).filter(l => l.rel !== 'self');
+                const statusClass = getDisputeStatusClass(d.status);
+
+                // Build sections
+                let html = `
+                    <div class="dispute-detail-header">
+                        <div class="dispute-detail-title">Dispute: ${d.dispute_id}</div>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <a href="https://www.sandbox.paypal.com/resolutioncenter/view/${d.dispute_id}/inquiry" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:6px;background:#003087;color:#fff;font-size:12px;font-weight:600;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#0050b3'" onmouseout="this.style.background='#003087'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                PayPal Resolution Center
+                            </a>
+                            <button class="dispute-detail-close" onclick="closeDisputeDetail()">&times;</button>
+                        </div>
+                    </div>
+
+                    <!-- Basic Info -->
+                    <div class="dispute-section">
+                        <div class="dispute-section-title">Basic Information</div>
+                        <div class="dispute-detail-grid">
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Status</div>
+                                <div class="dispute-detail-field-value"><span class="dispute-status ${statusClass}">${formatDisputeStatus(d.status)}</span></div>
+                            </div>
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Dispute Amount</div>
+                                <div class="dispute-detail-field-value" style="color:#f87171;font-weight:700;">${d.dispute_amount ? d.dispute_amount.currency_code + ' ' + d.dispute_amount.value : '--'}</div>
+                            </div>
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Reason</div>
+                                <div class="dispute-detail-field-value">${formatDisputeReason(d.reason)}</div>
+                            </div>
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Life Cycle Stage</div>
+                                <div class="dispute-detail-field-value">${d.dispute_life_cycle_stage || '--'}</div>
+                            </div>
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Dispute Channel</div>
+                                <div class="dispute-detail-field-value">${d.dispute_channel || '--'}</div>
+                            </div>
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Dispute Flow</div>
+                                <div class="dispute-detail-field-value">${d.dispute_flow || '--'}</div>
+                            </div>
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Created</div>
+                                <div class="dispute-detail-field-value">${formatDateTime(d.create_time)}</div>
+                            </div>
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Updated</div>
+                                <div class="dispute-detail-field-value">${formatDateTime(d.update_time)}</div>
+                            </div>
+                            ${d.seller_response_due_date ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Seller Response Due</div>
+                                <div class="dispute-detail-field-value dispute-due-date">${formatDateTime(d.seller_response_due_date)}</div>
+                            </div>` : ''}
+                            ${d.external_reason_code ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">External Reason Code</div>
+                                <div class="dispute-detail-field-value">${d.external_reason_code}</div>
+                            </div>` : ''}
+                            ${d.dispute_state ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Dispute State</div>
+                                <div class="dispute-detail-field-value" style="color:${d.dispute_state === 'REQUIRED_ACTION' ? '#f97316' : '#888'};font-weight:600;">${d.dispute_state.replace(/_/g, ' ')}</div>
+                            </div>` : ''}
+                            ${d.dispute_outcome ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Outcome</div>
+                                <div class="dispute-detail-field-value">${d.dispute_outcome.outcome_code || '--'}</div>
+                            </div>
+                            ${d.dispute_outcome.amount_refunded ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Amount Refunded</div>
+                                <div class="dispute-detail-field-value" style="color:#4ade80;font-weight:600;">${d.dispute_outcome.amount_refunded.currency_code} ${d.dispute_outcome.amount_refunded.value}</div>
+                            </div>` : ''}` : ''}
+                            ${d.refund_details?.allowed_refund_amount ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Allowed Refund Amount</div>
+                                <div class="dispute-detail-field-value" style="color:#fbbf24;font-weight:600;">${d.refund_details.allowed_refund_amount.currency_code} ${d.refund_details.allowed_refund_amount.value}</div>
+                            </div>` : ''}
+                        </div>
+                    </div>`;
+
+                // Allowed Response Options
+                const aro = d.allowed_response_options || {};
+                const hasAro = aro.accept_claim || aro.make_offer || aro.acknowledge_return_item || aro.provide_evidence;
+                if (hasAro) {
+                    html += `
+                    <div class="dispute-section">
+                        <div class="dispute-section-title">Allowed Response Options</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                            ${aro.accept_claim ? (aro.accept_claim.accept_claim_types || []).map(t => `<span class="dispute-action-badge respond" title="Accept Claim">${t.replace(/_/g, ' ')}</span>`).join('') : ''}
+                            ${aro.make_offer ? (aro.make_offer.offer_types || []).map(t => `<span class="dispute-action-badge" title="Make Offer">OFFER: ${t.replace(/_/g, ' ')}</span>`).join('') : ''}
+                            ${aro.acknowledge_return_item ? `<span class="dispute-action-badge">ACKNOWLEDGE RETURN</span>` : ''}
+                            ${aro.provide_evidence ? `<span class="dispute-action-badge">PROVIDE EVIDENCE</span>` : ''}
+                        </div>
+                    </div>`;
+                }
+
+                // Seller Actions (available API actions)
+                if (sellerActions.length > 0) {
+                    html += `
+                    <div class="dispute-section">
+                        <div class="dispute-section-title">Available Actions</div>
+                        <div style="padding:4px 0;">
+                            ${sellerActions.map(a => {
+                                const isRespond = a.rel.includes('provide') || a.rel.includes('accept') || a.rel.includes('acknowledge');
+                                return `<span class="dispute-action-badge${isRespond ? ' respond' : ''}" title="${a.method} ${a.href}">${a.rel.replace(/-/g, ' ')}</span>`;
+                            }).join('')}
+                        </div>
+                    </div>`;
+                }
+
+                // Disputed Transactions (enhanced)
+                if (txns.length > 0) {
+                    html += `
+                    <div class="dispute-section">
+                        <div class="dispute-section-title">Disputed Transactions (${txns.length})</div>
+                        ${txns.map(t => {
+                            const buyer = t.buyer || {};
+                            const seller = t.seller || {};
+                            const items = t.items || [];
+                            return `
+                            <div class="dispute-detail-grid" style="margin-bottom:10px;">
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Seller Transaction ID</div>
+                                    <div class="dispute-detail-field-value" style="font-family:'SF Mono','Fira Code',monospace;font-size:12px;">${t.seller_transaction_id || '--'}</div>
+                                </div>
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Buyer Transaction ID</div>
+                                    <div class="dispute-detail-field-value" style="font-family:'SF Mono','Fira Code',monospace;font-size:12px;">${t.buyer_transaction_id || '--'}</div>
+                                </div>
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Gross Amount</div>
+                                    <div class="dispute-detail-field-value" style="font-weight:600;">${t.gross_amount ? t.gross_amount.currency_code + ' ' + t.gross_amount.value : '--'}</div>
+                                </div>
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Transaction Status</div>
+                                    <div class="dispute-detail-field-value">${t.status || t.transaction_status || '--'}</div>
+                                </div>
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Buyer</div>
+                                    <div class="dispute-detail-field-value">${buyer.name || '--'}</div>
+                                </div>
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Buyer Email</div>
+                                    <div class="dispute-detail-field-value">${buyer.email || '--'}</div>
+                                </div>
+                                ${seller.name ? `
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Seller</div>
+                                    <div class="dispute-detail-field-value">${seller.name}</div>
+                                </div>` : ''}
+                                ${seller.email ? `
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Seller Email</div>
+                                    <div class="dispute-detail-field-value">${seller.email}</div>
+                                </div>` : ''}
+                                ${seller.merchant_id ? `
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Merchant ID</div>
+                                    <div class="dispute-detail-field-value" style="font-family:'SF Mono','Fira Code',monospace;font-size:12px;">${seller.merchant_id}</div>
+                                </div>` : ''}
+                                ${t.create_time ? `
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Transaction Date</div>
+                                    <div class="dispute-detail-field-value">${formatDateTime(t.create_time)}</div>
+                                </div>` : ''}
+                                ${t.seller_protection_eligible !== undefined ? `
+                                <div class="dispute-detail-field">
+                                    <div class="dispute-detail-field-label">Seller Protection</div>
+                                    <div class="dispute-detail-field-value" style="color:${t.seller_protection_eligible ? '#4ade80' : '#f87171'};font-weight:600;">
+                                        ${t.seller_protection_eligible ? 'Eligible' : 'Not Eligible'}${t.seller_protection_type ? ' (' + t.seller_protection_type.replace(/_/g, ' ') + ')' : ''}
+                                    </div>
+                                </div>` : ''}
+                            </div>
+                            ${items.length > 0 ? `
+                            <div style="margin: 0 0 12px 0; padding: 8px 12px; background: #111; border-radius: 6px; font-size: 12px; color: #888;">
+                                <strong style="color:#aaa;">Items:</strong> ${items.map(i => {
+                                    const name = i.item_name || i.name || 'Item';
+                                    const qty = i.item_quantity || i.quantity || 1;
+                                    const desc = i.item_description || '';
+                                    const type = i.item_type ? ' [' + i.item_type.replace(/_/g, ' ') + ']' : '';
+                                    const reason = i.reason ? ' - ' + i.reason.replace(/_/g, ' ') : '';
+                                    return name + ' (' + qty + 'x)' + type + reason + (desc ? ' - ' + desc : '');
+                                }).join('; ')}
+                            </div>` : ''}`;
+                        }).join('')}
+                    </div>`;
+                }
+
+                // Extensions (billing / merchandise dispute properties)
+                const ext = d.extensions || {};
+                const billingProps = ext.billing_dispute_properties || null;
+                const merchProps = ext.merchandise_dispute_properties || null;
+                const hasBuyerContactedTime = ext.buyer_contacted_time;
+
+                if (billingProps || merchProps || hasBuyerContactedTime) {
+                    html += `<div class="dispute-section"><div class="dispute-section-title">Dispute Details (Extensions)</div>`;
+                    if (hasBuyerContactedTime) {
+                        html += `
+                        <div class="dispute-detail-grid" style="margin-bottom:10px;">
+                            <div class="dispute-detail-field full">
+                                <div class="dispute-detail-field-label">Buyer Contacted Seller</div>
+                                <div class="dispute-detail-field-value">${formatDateTime(ext.buyer_contacted_time)}</div>
+                            </div>
+                        </div>`;
+                    }
+                    if (billingProps) {
+                        html += `
+                        <div class="dispute-detail-grid">
+                            ${billingProps.duplicate_transaction !== undefined ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Duplicate Transaction</div>
+                                <div class="dispute-detail-field-value">${billingProps.duplicate_transaction ? 'Yes' : 'No'}</div>
+                            </div>` : ''}
+                            ${billingProps.incorrect_amount !== undefined ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Incorrect Amount</div>
+                                <div class="dispute-detail-field-value">${billingProps.incorrect_amount ? 'Yes' : 'No'}</div>
+                            </div>` : ''}
+                            ${billingProps.credit_not_processed ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Credit Not Processed</div>
+                                <div class="dispute-detail-field-value">Yes</div>
+                            </div>` : ''}
+                            ${billingProps.payment_by_other_means ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Payment By Other Means</div>
+                                <div class="dispute-detail-field-value">Yes - ${billingProps.payment_by_other_means}</div>
+                            </div>` : ''}
+                            ${billingProps.recurring_charge_without_permission ? `
+                            <div class="dispute-detail-field full">
+                                <div class="dispute-detail-field-label">Recurring Charge Without Permission</div>
+                                <div class="dispute-detail-field-value">Yes - Expected: ${billingProps.expected_refund || '--'}</div>
+                            </div>` : ''}
+                            ${billingProps.cancellation_details ? `
+                            <div class="dispute-detail-field full">
+                                <div class="dispute-detail-field-label">Cancellation Details</div>
+                                <div class="dispute-detail-field-value">
+                                    Cancelled: ${billingProps.cancellation_details.cancelled_date ? formatDateTime(billingProps.cancellation_details.cancelled_date) : '--'}<br>
+                                    Cancellation #: ${billingProps.cancellation_details.cancellation_number || '--'}<br>
+                                    Mode: ${billingProps.cancellation_details.cancellation_mode || '--'}
+                                </div>
+                            </div>` : ''}
+                        </div>`;
+                    }
+                    if (merchProps) {
+                        html += `
+                        <div class="dispute-detail-grid">
+                            ${merchProps.issue_type ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Issue Type</div>
+                                <div class="dispute-detail-field-value">${merchProps.issue_type.replace(/_/g, ' ')}</div>
+                            </div>` : ''}
+                            ${merchProps.service_details?.sub_reasons?.length ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Sub Reasons</div>
+                                <div class="dispute-detail-field-value">${merchProps.service_details.sub_reasons.join(', ')}</div>
+                            </div>` : ''}
+                            ${merchProps.service_details?.purchase_url ? `
+                            <div class="dispute-detail-field full">
+                                <div class="dispute-detail-field-label">Purchase URL</div>
+                                <div class="dispute-detail-field-value" style="word-break:break-all;">${merchProps.service_details.purchase_url}</div>
+                            </div>` : ''}
+                            ${merchProps.product_details ? `
+                            <div class="dispute-detail-field full">
+                                <div class="dispute-detail-field-label">Product Details</div>
+                                <div class="dispute-detail-field-value">
+                                    ${merchProps.product_details.product_description || '--'}
+                                    ${merchProps.product_details.expected_delivery_date ? '<br>Expected Delivery: ' + formatDateTime(merchProps.product_details.expected_delivery_date) : ''}
+                                </div>
+                            </div>` : ''}
+                            ${merchProps.return_details ? `
+                            <div class="dispute-detail-field full">
+                                <div class="dispute-detail-field-label">Return Details</div>
+                                <div class="dispute-detail-field-value">
+                                    Mode: ${merchProps.return_details.mode || '--'}<br>
+                                    Receipt: ${merchProps.return_details.receipt ? 'Yes' : 'No'}
+                                    ${merchProps.return_details.return_date ? '<br>Date: ' + formatDateTime(merchProps.return_details.return_date) : ''}
+                                </div>
+                            </div>` : ''}
+                        </div>`;
+                    }
+                    html += `</div>`;
+                }
+
+                // Offer
+                const allOffers = offer ? [offer, ...offerHistory] : offerHistory;
+                if (allOffers.length > 0) {
+                    html += `
+                    <div class="dispute-section">
+                        <div class="dispute-section-title">Offers (${allOffers.length})</div>
+                        ${allOffers.map((o, idx) => `
+                            <div class="dispute-offer-item">
+                                <div class="dispute-offer-type">${idx === 0 && offer ? 'Current Offer' : 'Previous Offer'} &mdash; ${(o.offer_type || '--').replace(/_/g, ' ')}</div>
+                                <div style="font-size:13px;color:#ccc;margin-top:6px;">
+                                    ${o.offer_amount ? '<strong>Amount:</strong> ' + o.offer_amount.currency_code + ' ' + o.offer_amount.value : ''}
+                                    ${o.buyer_requested_amount ? ' | <strong>Buyer Requested:</strong> ' + o.buyer_requested_amount.currency_code + ' ' + o.buyer_requested_amount.value : ''}
+                                </div>
+                                ${o.history ? `<div style="font-size:11px;color:#666;margin-top:4px;">
+                                    Actor: ${o.history.actor || '--'} | Date: ${o.history.offer_time ? formatDateTime(o.history.offer_time) : '--'} | Event: ${o.history.event_type || '--'}
+                                </div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>`;
+                }
+
+                // Evidences
+                if (evidences.length > 0) {
+                    html += `
+                    <div class="dispute-section">
+                        <div class="dispute-section-title">Evidence (${evidences.length})</div>
+                        ${evidences.map(e => `
+                            <div class="dispute-evidence-item">
+                                <div class="dispute-evidence-type">${(e.evidence_type || 'EVIDENCE').replace(/_/g, ' ')} &mdash; Source: ${e.source || '--'}</div>
+                                ${e.notes ? `<div style="font-size:12px;color:#bbb;margin-top:4px;">${e.notes}</div>` : ''}
+                                ${(e.evidence_info?.tracking_info || []).length > 0 ? `
+                                <div class="dispute-evidence-docs" style="margin-top:6px;">
+                                    ${e.evidence_info.tracking_info.map(ti => `Tracking: ${ti.carrier_name || '--'} #${ti.tracking_number || '--'}`).join('<br>')}
+                                </div>` : ''}
+                                ${(e.evidence_info?.refund_ids || []).length > 0 ? `
+                                <div class="dispute-evidence-docs" style="margin-top:6px;">
+                                    Refund IDs: ${e.evidence_info.refund_ids.join(', ')}
+                                </div>` : ''}
+                                ${(e.documents || []).length > 0 ? `
+                                <div class="dispute-evidence-docs" style="margin-top:6px;">
+                                    Documents: ${e.documents.map(doc => doc.name || doc.url || 'File').join(', ')}
+                                </div>` : ''}
+                                ${e.date ? `<div style="font-size:11px;color:#555;margin-top:4px;">${formatDateTime(e.date)}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>`;
+                }
+
+                // Money Movements
+                if (moneyMovements.length > 0) {
+                    html += `
+                    <div class="dispute-section">
+                        <div class="dispute-section-title">Money Movements (${moneyMovements.length})</div>
+                        ${moneyMovements.map(m => {
+                            const isCredit = (m.type || '').includes('CREDIT') || (m.type || '').includes('REFUND');
+                            return `
+                            <div class="dispute-money-row">
+                                <div>
+                                    <span class="dispute-money-type">${(m.type || '--').replace(/_/g, ' ')}</span>
+                                    ${m.payer ? ` &mdash; ${m.payer}` : ''}
+                                    ${m.payee ? ` &rarr; ${m.payee}` : ''}
+                                </div>
+                                <div>
+                                    <span class="dispute-money-amount ${isCredit ? 'credit' : 'debit'}">${m.amount ? m.amount.currency_code + ' ' + m.amount.value : '--'}</span>
+                                    ${m.initiated_time ? `<span style="margin-left:8px;font-size:11px;color:#555;">${formatDateTime(m.initiated_time)}</span>` : ''}
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>`;
+                }
+
+                // Communication Details
+                const commDetails = d.communication_details || null;
+                if (commDetails) {
+                    html += `
+                    <div class="dispute-section">
+                        <div class="dispute-section-title">Communication Details</div>
+                        <div class="dispute-detail-grid">
+                            ${commDetails.email ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Email</div>
+                                <div class="dispute-detail-field-value">${commDetails.email}</div>
+                            </div>` : ''}
+                            ${commDetails.phone_number ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Phone</div>
+                                <div class="dispute-detail-field-value">${commDetails.phone_number}</div>
+                            </div>` : ''}
+                            ${commDetails.note ? `
+                            <div class="dispute-detail-field full">
+                                <div class="dispute-detail-field-label">Note</div>
+                                <div class="dispute-detail-field-value">${commDetails.note}</div>
+                            </div>` : ''}
+                            ${commDetails.time_posted ? `
+                            <div class="dispute-detail-field">
+                                <div class="dispute-detail-field-label">Posted</div>
+                                <div class="dispute-detail-field-value">${formatDateTime(commDetails.time_posted)}</div>
+                            </div>` : ''}
+                        </div>
+                    </div>`;
+                }
+
+                // Messages
+                if (messages.length > 0) {
+                    html += `
+                    <div class="dispute-messages">
+                        <div class="dispute-messages-title">Messages (${messages.length})</div>
+                        ${messages.map(m => `
+                            <div class="dispute-message">
+                                <div class="dispute-message-meta">${m.posted_by || 'Unknown'} &mdash; ${formatDateTime(m.time_posted)}</div>
+                                <div class="dispute-message-text">${m.content || ''}</div>
+                                ${(m.documents || []).length > 0 ? `<div style="font-size:11px;color:#666;margin-top:4px;">Attachments: ${m.documents.map(doc => doc.name || 'File').join(', ')}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>`;
+                }
+
+                // Available API Links
+                const apiLinks = (d.links || []);
+                if (apiLinks.length > 0) {
+                    html += `
+                    <div class="dispute-section" style="margin-top:16px;">
+                        <div class="dispute-section-title">API Links</div>
+                        <div class="dispute-link-list">
+                            ${apiLinks.map(l => `<span class="dispute-link-item" title="${l.method} ${l.href}">${l.method} ${l.rel}</span>`).join('')}
+                        </div>
+                    </div>`;
+                }
+
+                content.innerHTML = html;
+            } catch (err) {
+                content.innerHTML = `
+                    <div class="dispute-detail-header">
+                        <div class="dispute-detail-title">Error</div>
+                        <button class="dispute-detail-close" onclick="closeDisputeDetail()">&times;</button>
+                    </div>
+                    <div class="no-data">Failed to load: ${err.message}</div>`;
+            }
+        }
+
+        function closeDisputeDetail() {
+            document.getElementById('dispute-detail-modal').classList.remove('visible');
+        }
+
+        document.getElementById('dispute-detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeDisputeDetail();
+        });
+
+        // ─── Dispute Helpers ───
+
+        function getDisputeStatusClass(status) {
+            if (!status) return 'dispute-status-other';
+            const s = status.toLowerCase();
+            if (s === 'resolved') return 'dispute-status-resolved';
+            if (s === 'under_review') return 'dispute-status-under_review';
+            if (s === 'waiting_for_buyer_response') return 'dispute-status-waiting_for_buyer_response';
+            if (s === 'waiting_for_seller_response' || s === 'open') return 'dispute-status-open';
+            return 'dispute-status-other';
+        }
+
+        function formatDisputeStatus(status) {
+            if (!status) return 'Unknown';
+            return status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).replace(/\bFor\b/g, 'for');
+        }
+
+        function formatDisputeReason(reason) {
+            if (!reason) return '--';
+            return reason.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).replace(/\bOr\b/g, 'or').replace(/\bNot\b/g, 'not').replace(/\bAs\b/g, 'as').replace(/\bBy\b/g, 'by');
+        }
+
+        // ─── Set default date range (last 30 days) ───
+        function initDisputeFilters() {
+            const now = new Date();
+            const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            document.getElementById('filter-end-date').value = now.toISOString().split('T')[0];
+            document.getElementById('filter-start-date').value = thirtyDaysAgo.toISOString().split('T')[0];
+        }
+
+        initDisputeFilters();
+        loadUsers();
+        loadOrderStats();
+    </script>
+</body>
+</html>

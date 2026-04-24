@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJCloud - Store</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333333;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 40px;
+            background: #ffffff;
+            border-bottom: 3px solid #7ab648;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: #333;
+            letter-spacing: 1px;
+        }
+
+        .logo .aj { color: #333; }
+        .logo .cloud { color: #7ab648; }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+            text-transform: uppercase;
+        }
+
+        .nav-links a:hover { color: #7ab648; }
+        .nav-links a.active { color: #7ab648; }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .header-icon {
+            color: #888;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon:hover { color: #7ab648; }
+
+        .header-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .globe-icon {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .globe-icon .arrow {
+            font-size: 10px;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7ab648, #5a9a2e);
+            border: 2px solid #5a9a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .header-username {
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            padding: 14px 40px;
+            font-size: 14px;
+            color: #999;
+            background: #fff;
+        }
+
+        .breadcrumb a {
+            color: #999;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover { color: #7ab648; }
+
+        .breadcrumb .sep { margin: 0 8px; }
+
+        .breadcrumb .current {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Device Info Bar */
+        .coins-bar-wrap {
+            background: #ffffff;
+            padding: 0 40px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .coins-bar {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 0;
+        }
+
+        .coins-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 15px;
+            color: #666;
+        }
+
+        .device-icon {
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #7ab648;
+            font-size: 16px;
+        }
+
+        .coins-info strong {
+            color: #333;
+            font-weight: 700;
+        }
+
+        .coins-divider {
+            color: #ccc;
+            margin: 0 12px;
+            font-size: 14px;
+        }
+
+        .transaction-link {
+            color: #7ab648;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .transaction-link:hover { color: #5a9a2e; }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 28px 40px 60px;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .section-title-bar {
+            width: 40px;
+            height: 3px;
+            background: #7ab648;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 16px;
+        }
+
+        /* Subscription Cards */
+        .vip-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .vip-card {
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 22px 24px 20px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s, transform 0.15s, box-shadow 0.25s;
+        }
+
+        .vip-card::before {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(122, 182, 72, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .vip-card::after {
+            content: '';
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 50px;
+            color: rgba(122, 182, 72, 0.1);
+            pointer-events: none;
+        }
+
+        .vip-card:hover {
+            border-color: #7ab648;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(122, 182, 72, 0.12);
+        }
+
+        .vip-card.selected {
+            border-color: #7ab648;
+            box-shadow: 0 0 0 1px #7ab648, 0 8px 30px rgba(122, 182, 72, 0.15);
+        }
+
+        .vip-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vip-price {
+            font-size: 34px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vip-renew {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vip-features {
+            display: flex;
+            gap: 36px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vip-feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #777;
+        }
+
+        .vip-feature-icon {
+            font-size: 15px;
+            color: #7ab648;
+        }
+
+        /* Top up coins section */
+        .coins-section {
+            margin-bottom: 40px;
+        }
+
+        .coins-section .section-title {
+            margin-bottom: 16px;
+        }
+
+        .coins-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .coin-card {
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 18px 16px;
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+
+        .coin-card:hover {
+            border-color: #7ab648;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(122,182,72,0.1);
+        }
+
+        .coin-card.selected {
+            border-color: #7ab648;
+            box-shadow: 0 0 0 1px #7ab648, 0 4px 20px rgba(122,182,72,0.12);
+        }
+
+        .coin-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #7ab648;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+
+        .coin-amount {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .coin-amount .data-icon {
+            color: #7ab648;
+            font-size: 20px;
+        }
+
+        .coin-detail {
+            font-size: 13px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .coin-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #7ab648;
+            margin-top: 14px;
+        }
+
+        /* Payment Methods */
+        .payment-section {
+            margin-bottom: 0;
+        }
+
+        .payment-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .payment-btn {
+            padding: 14px 20px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            color: #333;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .payment-btn:hover {
+            border-color: #7ab648;
+            background: #fafafa;
+        }
+
+        .payment-btn.active {
+            border-color: #0070ba;
+            background: rgba(0, 112, 186, 0.05);
+        }
+
+        .payment-btn.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Google Pay */
+        .gpay-text {
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: -0.3px;
+        }
+
+        .gpay-text .g-letter {
+            display: inline-block;
+            background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* PayPal */
+        .paypal-text {
+            font-weight: 800;
+            font-size: 17px;
+            font-style: italic;
+            letter-spacing: -0.5px;
+        }
+
+        .paypal-text .pp-pay { color: #003087; }
+        .paypal-text .pp-pal { color: #009cde; }
+
+        .return-payer-email {
+            font-size: 12px;
+            font-weight: 500;
+            color: #888;
+            font-style: normal;
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Vault with Purchase Checkbox */
+        .vault-option {
+            grid-column: 3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .vault-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #7ab648;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .vault-option label {
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .paypal-btn-wrap {
+            position: relative;
+        }
+
+        #paypal-btn.payment-btn {
+            background: #ffc439;
+            color: #333;
+            border-color: #ffc439;
+            width: 100%;
+        }
+
+        #paypal-btn.payment-btn:hover {
+            background: #f0b830;
+            border-color: #f0b830;
+        }
+
+        /* V6 overlay — transparent click target for PayPal popup */
+        #paypal-v6-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.01;
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        /* When returning payer, hide overlay so custom button onclick fires */
+        .paypal-btn-wrap.returning-payer #paypal-v6-overlay {
+            display: none;
+        }
+
+        /* Card Fields (ACDC) */
+        .card-fields-section {
+            grid-column: 3;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .card-fields-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #888;
+            margin-bottom: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-fields-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .card-field-container {
+            background: #fafafa;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 14px 4px;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+
+        .card-field-container paypal-hosted-card-field {
+            display: block;
+            height: 30px;
+        }
+
+        .card-field-container:focus-within,
+        .card-field-container.focused {
+            border-color: #5a8abf;
+        }
+
+        .card-field-container.invalid {
+            border-color: #e53935;
+        }
+
+        .card-field-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-fields-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .card-vault-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .card-vault-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #0070ba;
+        }
+
+        .card-vault-option label {
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        #card-pay-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 14px;
+            background: linear-gradient(135deg, #0070ba, #005ea6);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.2s, opacity 0.2s;
+        }
+
+        #card-pay-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        #card-pay-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .saved-card-info {
+            display: none;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .saved-card-info .saved-card-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .saved-card-info .saved-card-detail {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .saved-card-info .saved-card-number {
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .saved-card-info .saved-card-brand {
+            font-size: 12px;
+            color: #777;
+            text-transform: uppercase;
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        #saved-card-pay-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #0070ba, #005ea6);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.2s, opacity 0.2s;
+        }
+
+        #saved-card-pay-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        #saved-card-pay-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .saved-card-switch {
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .saved-card-switch a {
+            font-size: 12px;
+            color: #0070ba;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .saved-card-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .card-status {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 13px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .card-status.error {
+            display: block;
+            color: #f87171;
+            background: rgba(229, 57, 53, 0.1);
+            border: 1px solid #e53935;
+        }
+
+        .card-status.processing {
+            display: block;
+            color: #999;
+        }
+
+        /* Status message */
+        .status-message {
+            display: none;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-message.success {
+            display: block;
+            background: rgba(122, 182, 72, 0.1);
+            border: 1px solid #7ab648;
+            color: #5a9a2e;
+        }
+
+        .status-message.error {
+            display: block;
+            background: rgba(229, 57, 53, 0.1);
+            border: 1px solid #e53935;
+            color: #f87171;
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 36px 40px;
+            text-align: center;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(122, 182, 72, 0.15);
+            border: 2px solid #7ab648;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+
+        .processing-spinner {
+            background: none !important;
+            border: 3px solid #e0e0e0;
+            border-top: 3px solid #7ab648;
+            animation: spin 0.8s linear infinite;
+            font-size: 0;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .modal-detail {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 6px;
+            line-height: 1.6;
+        }
+
+        .modal-amount {
+            font-size: 24px;
+            font-weight: 800;
+            color: #7ab648;
+            margin: 12px 0 20px;
+        }
+
+        .modal-btn {
+            background: linear-gradient(135deg, #7ab648, #5a9a2e);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 40px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+
+        .modal-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Subscription Details */
+        .sub-details {
+            margin-top: 36px;
+            padding-top: 0;
+        }
+
+        .sub-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .sub-details-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sub-details-list li {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.9;
+            padding-left: 0;
+        }
+
+        .sub-details-list li::before {
+            content: attr(data-num) '. ';
+            color: #666;
+        }
+
+        /* Mode Toggle */
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 4px;
+            cursor: pointer;
+        }
+
+        .mode-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 26px;
+            border: none;
+            border-radius: 4px;
+            background: transparent;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-toggle-btn.active {
+            background: #7ab648;
+            color: #fff;
+        }
+
+        .mode-toggle-btn:hover:not(.active) {
+            color: #999;
+        }
+
+        .mode-toggle-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Mobile Mode (forced) */
+        body.mobile-mode .header { padding: 10px 16px; }
+        body.mobile-mode .nav-links { display: none; }
+        body.mobile-mode .breadcrumb { padding: 12px 16px; }
+        body.mobile-mode .coins-bar-wrap { padding: 0 16px; }
+        body.mobile-mode .main-content { padding: 20px 16px 40px; max-width: 480px; margin: 0 auto; }
+        body.mobile-mode .vip-grid { grid-template-columns: 1fr; }
+        body.mobile-mode .coins-grid { grid-template-columns: 1fr 1fr; }
+        body.mobile-mode .payment-methods { grid-template-columns: 1fr; }
+        body.mobile-mode .paypal-sdk-btn-section { max-width: 100%; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .header { padding: 10px 20px; }
+            .breadcrumb { padding: 14px 20px; }
+            .coins-bar-wrap { padding: 0 20px; }
+            .main-content { padding: 28px 20px 40px; }
+            .vip-grid { grid-template-columns: 1fr; }
+            .coins-grid { grid-template-columns: repeat(2, 1fr); }
+            .payment-methods { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .nav-links { display: none; }
+            .header { padding: 10px 16px; }
+            .breadcrumb { padding: 12px 16px; }
+            .coins-bar-wrap { padding: 0 16px; }
+            .main-content { padding: 20px 16px 40px; }
+            .coins-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo"><span class="aj">AJ</span><span class="cloud">CLOUD</span></div>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#" class="active">Products</a>
+                <a href="#">Tools</a>
+                <a href="#">Partners</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="header-icon">
+                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            </span>
+            <div class="mode-toggle" id="mode-toggle">
+                <button class="mode-toggle-btn active" id="btn-desktop" onclick="setMode('desktop')" title="Desktop">
+                    <svg viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg>
+                </button>
+                <button class="mode-toggle-btn" id="btn-mobile" onclick="setMode('mobile')" title="Mobile">
+                    <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+                </button>
+            </div>
+            <span class="header-icon globe-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                <span class="arrow">&#9662;</span>
+            </span>
+            <a href="/profile" class="user-area" id="user-area">
+                <div class="avatar" id="header-avatar"></div>
+                <span class="header-username" id="header-username"></span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/profile">Dashboard</a><span class="sep">/</span><span class="current">Cloud Store</span>
+    </div>
+
+    <!-- Coins Bar -->
+    <div class="coins-bar-wrap">
+        <div class="coins-bar">
+            <div class="coins-info">
+                Devices:&nbsp; <span class="device-icon">&#128247;</span>&nbsp;<strong id="coins-display">0</strong>
+                <span class="coins-divider">|</span>
+                Storage:&nbsp; <span class="device-icon">&#9729;</span>&nbsp;<strong id="bonus-display">0</strong> GB
+            </div>
+            <a href="/profile" class="transaction-link">Order History &#8250;</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Cloud Storage Plans -->
+        <div class="section-title">CLOUD STORAGE PLANS</div>
+        <div class="section-title-bar"></div>
+        <div class="section-subtitle">Auto renew. Cancel anytime. Secure cloud recording for your IP cameras.</div>
+
+        <div class="vip-grid">
+            <div class="vip-card" data-product="monthly_basic" onclick="selectProduct(this)">
+                <div class="vip-label">Basic Monthly</div>
+                <div class="vip-price">$4.99</div>
+                <div class="vip-renew">7-day rolling cloud storage</div>
+                <div class="vip-features">
+                    <div class="vip-feature"><span class="vip-feature-icon">&#128247;</span> 1 Camera</div>
+                    <div class="vip-feature"><span class="vip-feature-icon">&#9729;</span> 7 Days Recording</div>
+                </div>
+            </div>
+            <div class="vip-card" data-product="monthly_standard" onclick="selectProduct(this)">
+                <div class="vip-label">Standard Monthly</div>
+                <div class="vip-price">$9.99</div>
+                <div class="vip-renew">30-day rolling cloud storage</div>
+                <div class="vip-features">
+                    <div class="vip-feature"><span class="vip-feature-icon">&#128247;</span> Up to 3 Cameras</div>
+                    <div class="vip-feature"><span class="vip-feature-icon">&#9729;</span> 30 Days Recording</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Traffic -->
+        <div class="coins-section">
+            <div class="section-title">DATA TRAFFIC PACKAGES</div>
+            <div class="section-title-bar"></div>
+
+            <div class="coins-grid">
+                <div class="coin-card" data-product="data_5gb" onclick="selectProduct(this)">
+                    <div class="coin-amount"><span class="data-icon">&#128230;</span> 5GB</div>
+                    <div class="coin-detail">Cloud upload traffic</div>
+                    <div class="coin-detail">Valid for 30 days</div>
+                    <div class="coin-price">$1.99</div>
+                </div>
+                <div class="coin-card" data-product="data_20gb" onclick="selectProduct(this)">
+                    <div class="coin-badge">Popular</div>
+                    <div class="coin-amount"><span class="data-icon">&#128230;</span> 20GB</div>
+                    <div class="coin-detail">Cloud upload traffic</div>
+                    <div class="coin-detail">Valid for 30 days</div>
+                    <div class="coin-price">$4.99</div>
+                </div>
+                <div class="coin-card" data-product="data_50gb" onclick="selectProduct(this)">
+                    <div class="coin-amount"><span class="data-icon">&#128230;</span> 50GB</div>
+                    <div class="coin-detail">Cloud upload traffic</div>
+                    <div class="coin-detail">Valid for 90 days</div>
+                    <div class="coin-price">$9.99</div>
+                </div>
+                <div class="coin-card" data-product="data_100gb" onclick="selectProduct(this)">
+                    <div class="coin-badge">Best Value</div>
+                    <div class="coin-amount"><span class="data-icon">&#128230;</span> 100GB</div>
+                    <div class="coin-detail">Cloud upload traffic</div>
+                    <div class="coin-detail">Valid for 90 days</div>
+                    <div class="coin-price">$14.99</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="payment-section">
+            <div class="payment-title">Payment Methods</div>
+            <div class="payment-methods" style="grid-template-columns:1fr; max-width:400px; margin:0 auto;">
+                <div class="paypal-btn-wrap" id="paypal-btn-wrap">
+                    <button class="payment-btn active" id="paypal-btn" onclick="handlePayPal()" style="width:100%;">
+                        <span class="paypal-text"><span class="pp-pay">Pay</span><span class="pp-pal">Pal</span></span>
+                    </button>
+                </div>
+                <div class="vault-option" style="grid-column:1;">
+                    <input type="checkbox" id="vault-checkbox" checked>
+                    <label for="vault-checkbox">Save payment method for future purchases</label>
+                </div>
+                <div class="card-fields-section" style="grid-column:1;">
+                    <div class="card-fields-title">Or pay with card</div>
+                    <div class="saved-card-info" id="saved-card-info">
+                        <div class="saved-card-label">Saved Card</div>
+                        <div class="saved-card-detail">
+                            <span class="saved-card-number" id="saved-card-number"></span>
+                            <span class="saved-card-brand" id="saved-card-brand"></span>
+                        </div>
+                        <button id="saved-card-pay-btn" onclick="payWithSavedCard()">Pay with Saved Card</button>
+                        <div class="saved-card-switch"><a onclick="toggleNewCard(true)">Use a different card</a></div>
+                    </div>
+                    <div class="card-fields-form">
+                        <div class="card-field-container">
+                            <div class="card-field-label">Card Number</div>
+                            <div id="card-number-field"></div>
+                        </div>
+                        <div class="card-fields-row">
+                            <div class="card-field-container">
+                                <div class="card-field-label">Expiry</div>
+                                <div id="card-expiry-field"></div>
+                            </div>
+                            <div class="card-field-container">
+                                <div class="card-field-label">CVV</div>
+                                <div id="card-cvv-field"></div>
+                            </div>
+                        </div>
+                        <div class="card-vault-option">
+                            <input type="checkbox" id="card-vault-checkbox" checked>
+                            <label for="card-vault-checkbox">Save this card for future purchases</label>
+                        </div>
+                        <button id="card-pay-btn" onclick="submitCardPayment()" disabled>Pay with Card</button>
+                    </div>
+                    <div id="card-status" class="card-status"></div>
+                </div>
+            </div>
+
+            <div class="status-message" id="status-message"></div>
+        </div>
+
+        <!-- Subscription Details -->
+        <div class="sub-details">
+            <h4>Service Details:</h4>
+            <ul class="sub-details-list">
+                <li data-num="1">Cloud storage plans provide continuous recording for your AJCloud IP cameras during the active subscription period.</li>
+                <li data-num="2">Subscription automatically renews at the original price unless canceled. Payment will be charged within 24 hours before the end of the current period.</li>
+                <li data-num="3">You can cancel anytime in the AJCloud app via Settings > Subscription Management.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="processing-modal">
+        <div class="modal-box">
+            <div class="modal-icon processing-spinner"></div>
+            <div class="modal-title">Processing Payment</div>
+            <div class="modal-detail" style="color:#8b949e;margin-top:8px;">Please wait while we complete your transaction...</div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="success-modal">
+        <div class="modal-box">
+            <div class="modal-icon">&#10003;</div>
+            <div class="modal-title">Payment Successful</div>
+            <div class="modal-detail" id="modal-order"></div>
+            <div class="modal-amount" id="modal-amount"></div>
+            <button class="modal-btn" onclick="closeModal()">OK</button>
+        </div>
+    </div>
+
+    <!-- PayPal SDK V6 — used for card fields only; PayPal button is local + server redirect -->
+    <script src="https://www.sandbox.paypal.com/web-sdk/v6/core"></script>
+    <script>
+        // Mode toggle (mobile/desktop)
+        function setMode(mode) {
+            if (mode === 'mobile') {
+                document.body.classList.add('mobile-mode');
+                document.getElementById('btn-mobile').classList.add('active');
+                document.getElementById('btn-desktop').classList.remove('active');
+            } else {
+                document.body.classList.remove('mobile-mode');
+                document.getElementById('btn-desktop').classList.add('active');
+                document.getElementById('btn-mobile').classList.remove('active');
+            }
+            localStorage.setItem('ajcloud-mode', mode);
+        }
+
+        // Restore saved mode
+        (function() {
+            const saved = localStorage.getItem('ajcloud-mode');
+            if (saved === 'mobile') setMode('mobile');
+        })();
+
+        let selectedProduct = null;
+        let savedMethods = [];
+        let sdkInstance = null;
+        let cardFieldsSession = null;
+        const isMobileApp = navigator.userAgent.includes('AJCloudApp');
+
+        // ─── Mobile PayPal SDK callbacks (called from native Android) ──
+        window.onMobilePayPalApproved = async function(orderId) {
+            console.log('[Mobile] PayPal approved, capturing order:', orderId);
+            try {
+                const res = await fetch(`/api/orders/${orderId}/capture`, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                const captureData = await res.json();
+                if (captureData.status === 'COMPLETED') {
+                    const amount = captureData.purchase_units[0].payments.captures[0].amount.value;
+                    showSuccessModal(orderId, amount);
+                    refreshBalance();
+                    loadSavedMethods();
+                } else {
+                    showStatus('Payment failed: ' + captureData.status, 'error');
+                }
+            } catch (err) {
+                showStatus('Capture error: ' + err.message, 'error');
+            }
+        };
+        window.onMobilePayPalError = function(message) {
+            showStatus('PayPal error: ' + message, 'error');
+        };
+        window.onMobilePayPalCanceled = function() {
+            showStatus('Payment cancelled.', 'error');
+        };
+
+        // Auth check — redirect to login if not authenticated
+        async function checkAuth() {
+            try {
+                const res = await fetch('/auth/me');
+                if (!res.ok) {
+                    window.location.href = '/login';
+                    return null;
+                }
+                const user = await res.json();
+
+                // Populate header
+                document.getElementById('header-avatar').textContent = user.username[0].toUpperCase();
+                document.getElementById('header-username').textContent = user.username;
+
+                // Populate coins bar
+                document.getElementById('coins-display').textContent = user.coins.toLocaleString();
+                document.getElementById('bonus-display').textContent = user.bonus.toLocaleString();
+
+                return user;
+            } catch (e) {
+                window.location.href = '/login';
+                return null;
+            }
+        }
+
+        // Refresh balance display after payment
+        async function refreshBalance() {
+            try {
+                const res = await fetch('/auth/me');
+                if (res.ok) {
+                    const user = await res.json();
+                    document.getElementById('coins-display').textContent = user.coins.toLocaleString();
+                    document.getElementById('bonus-display').textContent = user.bonus.toLocaleString();
+                }
+            } catch (e) { /* ignore */ }
+        }
+
+        // ─── PayPal SDK V6 (card fields only) + Local PayPal Button ──
+
+        async function getClientToken() {
+            const res = await fetch('/api/client-token');
+            const data = await res.json();
+            return data.clientToken;
+        }
+
+        async function initPayPal() {
+            try {
+                const clientToken = await getClientToken();
+                sdkInstance = await paypal.createInstance({
+                    clientToken,
+                    components: ['card-fields'],
+                    pageType: 'checkout',
+                });
+                console.log('PayPal SDK v6 initialized (card fields only)');
+                initCardFields();
+            } catch (error) {
+                console.error('PayPal SDK init error:', error);
+            }
+        }
+
+        // Create order and get approve URL for redirect
+        async function createPayPalOrder() {
+            const savePaymentMethod = document.getElementById('vault-checkbox')?.checked ?? true;
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId: selectedProduct, savePaymentMethod }),
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            console.log('Order created:', data.id);
+            return data;
+        }
+
+        // handlePayPal: local button onclick
+        async function handlePayPal() {
+            if (!selectedProduct) { showStatus('Please select a plan or traffic package first.', 'error'); return; }
+            const btn = document.getElementById('paypal-btn');
+            btn.disabled = true;
+            clearStatus();
+
+            // Returning payer: use vault_id direct charge
+            const paypalMethod = savedMethods.find(m => m.type !== 'card');
+            if (paypalMethod) {
+                showProcessingModal();
+                try {
+                    const res = await fetch('/api/orders/saved', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId: selectedProduct, paymentTokenId: paypalMethod.paymentTokenId }),
+                    });
+                    const data = await res.json();
+                    hideProcessingModal();
+                    if (data.status === 'COMPLETED') {
+                        const amount = data.purchase_units[0].payments.captures[0].amount.value;
+                        showSuccessModal(data.id, amount);
+                        refreshBalance();
+                        loadSavedMethods();
+                    } else {
+                        showStatus('Payment failed: ' + (data.error || data.status), 'error');
+                    }
+                } catch (e) {
+                    hideProcessingModal();
+                    console.error('Returning payer error:', e);
+                    showStatus('Payment error: ' + e.message, 'error');
+                }
+                btn.disabled = false;
+                return;
+            }
+
+            // New payer: create order → redirect to PayPal approve URL
+            try {
+                showStatus('Redirecting to PayPal...', 'processing');
+                const data = await createPayPalOrder();
+                const approveUrl = data.approveUrl
+                    || data.links?.find(l => l.rel === 'payer-action')?.href
+                    || data.links?.find(l => l.rel === 'approve')?.href;
+                if (approveUrl) {
+                    // For external app: use bridge; for browser: redirect
+                    if (window.AJExternalPayment) {
+                        window.AJExternalPayment.openExternal(approveUrl);
+                    } else if (window.AJCloudPayPal) {
+                        window.AJCloudPayPal.checkout(data.id);
+                    } else {
+                        window.location.href = approveUrl;
+                    }
+                } else {
+                    showStatus('Failed to get PayPal checkout URL', 'error');
+                }
+            } catch (e) {
+                console.error('PayPal order error:', e);
+                showStatus('Payment error: ' + e.message, 'error');
+            }
+            btn.disabled = false;
+        }
+
+        // ─── ACDC Card Fields (V6 SDK) ──────────────────────────────────
+
+        function initCardFields() {
+            if (!sdkInstance) return;
+
+            try {
+                cardFieldsSession = sdkInstance.createCardFieldsOneTimePaymentSession({});
+
+                document.getElementById('card-number-field').appendChild(
+                    cardFieldsSession.createCardFieldsComponent({ type: 'number' })
+                );
+                document.getElementById('card-expiry-field').appendChild(
+                    cardFieldsSession.createCardFieldsComponent({ type: 'expiry' })
+                );
+                document.getElementById('card-cvv-field').appendChild(
+                    cardFieldsSession.createCardFieldsComponent({ type: 'cvv' })
+                );
+
+                document.getElementById('card-pay-btn').disabled = false;
+                console.log('Card fields rendered (V6)');
+            } catch (error) {
+                console.error('Card fields init error:', error);
+            }
+        }
+
+        async function submitCardPayment() {
+            if (!selectedProduct) { updateCardStatus('Please select a plan or traffic package first.', 'error'); return; }
+            if (!cardFieldsSession) { updateCardStatus('Card fields not initialized.', 'error'); return; }
+            const btn = document.getElementById('card-pay-btn');
+            btn.disabled = true;
+            clearCardStatus();
+            updateCardStatus('Creating order...', 'processing');
+
+            try {
+                // Step 1: Create order on server
+                const savePaymentMethod = document.getElementById('card-vault-checkbox')?.checked ?? false;
+                const res = await fetch('/api/orders/card', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: selectedProduct, savePaymentMethod }),
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                console.log('Card order created:', data.id);
+
+                // Step 2: Submit card fields with order ID (triggers 3DS if required)
+                updateCardStatus('Processing payment (3DS verification may appear)...', 'processing');
+                const submitResult = await cardFieldsSession.submit(data.id);
+                console.log('submit() resolved with:', JSON.stringify(submitResult));
+
+                // Step 3: Check 3DS liability shift
+                const liabilityShift = submitResult?.data?.liabilityShift || submitResult?.liabilityShift;
+                console.log('[3DS] liabilityShift:', liabilityShift);
+
+                if (liabilityShift === 'NO') {
+                    fetch('/api/orders/3ds-failed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: data.id, liabilityShift }) });
+                    updateCardStatus('3DS verification failed. Payment aborted.', 'error');
+                    btn.disabled = false;
+                    return;
+                } else if (liabilityShift === 'UNKNOWN') {
+                    fetch('/api/orders/3ds-failed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: data.id, liabilityShift }) });
+                    updateCardStatus('3DS authentication unavailable. Please retry.', 'error');
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Step 4: Capture
+                const orderId = submitResult?.data?.orderId || data.id;
+                updateCardStatus('Capturing payment...', 'processing');
+                const captureRes = await fetch(`/api/orders/${orderId}/capture`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const captureData = await captureRes.json();
+                console.log('Capture:', JSON.stringify(captureData));
+                if (captureData.status === 'COMPLETED') {
+                    const amount = captureData.purchase_units[0].payments.captures[0].amount.value;
+                    clearCardStatus();
+                    showSuccessModal(orderId, amount);
+                    refreshBalance();
+                    loadSavedMethods();
+                } else {
+                    updateCardStatus('Payment failed: ' + (captureData.details?.[0]?.description || captureData.status), 'error');
+                }
+                btn.disabled = false;
+            } catch (err) {
+                console.error('Card submit error:', err);
+                updateCardStatus('Payment failed: ' + (err.message || 'Please check your card details.'), 'error');
+                btn.disabled = false;
+            }
+        }
+
+        function updateCardStatus(message, type) {
+            const el = document.getElementById('card-status');
+            el.textContent = message;
+            el.className = 'card-status ' + type;
+        }
+
+        function clearCardStatus() {
+            const el = document.getElementById('card-status');
+            el.className = 'card-status';
+            el.textContent = '';
+        }
+
+        // ─── Saved Payment Methods ──────────────────────────────────────
+        async function loadSavedMethods() {
+            try {
+                const res = await fetch('/api/vault/payment-methods');
+                if (!res.ok) return;
+                savedMethods = await res.json();
+                updateSavedUI();
+            } catch (e) {
+                console.error('Load saved methods error:', e);
+            }
+        }
+
+        function updateSavedUI() {
+            // PayPal returning payer
+            const btn = document.getElementById('paypal-btn');
+            const wrap = document.getElementById('paypal-btn-wrap');
+            const vaultOption = document.querySelector('.vault-option');
+            const paypalMethod = savedMethods.find(m => m.type !== 'card');
+            if (window.isAJExternalApp) {
+                // External app: always use neutral text (Apple policy)
+                if (paypalMethod && btn) {
+                    btn.innerHTML = '<span style="font-weight:600;font-size:15px;color:#333;">Pay Now</span>';
+                    if (vaultOption) vaultOption.style.display = 'none';
+                    if (wrap) wrap.classList.add('returning-payer');
+                } else if (btn) {
+                    btn.innerHTML = '<span style="font-weight:600;font-size:15px;color:#333;">Continue to Purchase</span>';
+                    if (vaultOption) vaultOption.style.display = 'none';
+                    if (wrap) wrap.classList.remove('returning-payer');
+                }
+            } else if (paypalMethod && btn) {
+                btn.innerHTML = `<span class="paypal-text"><span class="pp-pay">Pay</span><span class="pp-pal">Pal</span></span><span class="return-payer-email">${paypalMethod.email}</span>`;
+                if (vaultOption) vaultOption.style.display = 'none';
+                if (wrap) wrap.classList.add('returning-payer');
+            } else if (btn) {
+                btn.innerHTML = `<span class="paypal-text"><span class="pp-pay">Pay</span><span class="pp-pal">Pal</span></span>`;
+                if (vaultOption) vaultOption.style.display = 'flex';
+                if (wrap) wrap.classList.remove('returning-payer');
+            }
+
+            // Card saved method
+            const cardVaultOption = document.getElementById('card-vault-checkbox')?.parentElement;
+            const savedCardInfo = document.getElementById('saved-card-info');
+            const cardForm = document.querySelector('.card-fields-form');
+            const cardMethod = savedMethods.find(m => m.type === 'card');
+            if (cardMethod && savedCardInfo) {
+                document.getElementById('saved-card-number').textContent = cardMethod.email || ('**** ' + (cardMethod.lastDigits || '****'));
+                document.getElementById('saved-card-brand').textContent = cardMethod.brand || 'CARD';
+                savedCardInfo.style.display = 'block';
+                if (cardForm) cardForm.style.display = 'none';
+                if (cardVaultOption) cardVaultOption.style.display = 'none';
+            } else {
+                if (savedCardInfo) savedCardInfo.style.display = 'none';
+                if (cardForm) cardForm.style.display = 'block';
+                if (cardVaultOption) cardVaultOption.style.display = 'flex';
+            }
+        }
+
+        function toggleNewCard(showNew) {
+            const savedCardInfo = document.getElementById('saved-card-info');
+            const cardForm = document.querySelector('.card-fields-form');
+            if (showNew) { savedCardInfo.style.display = 'none'; cardForm.style.display = 'block'; }
+            else { savedCardInfo.style.display = 'block'; cardForm.style.display = 'none'; }
+        }
+
+        async function payWithSavedCard() {
+            if (!selectedProduct) { updateCardStatus('Please select a plan or traffic package first.', 'error'); return; }
+            const cardMethod = savedMethods.find(m => m.type === 'card');
+            if (!cardMethod) { updateCardStatus('No saved card found.', 'error'); return; }
+            const btn = document.getElementById('saved-card-pay-btn');
+            btn.disabled = true;
+            clearCardStatus();
+            showProcessingModal();
+            try {
+                const res = await fetch('/api/orders/saved', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: selectedProduct, paymentTokenId: cardMethod.paymentTokenId }),
+                });
+                const data = await res.json();
+                hideProcessingModal();
+                if (data.status === 'COMPLETED') {
+                    const amount = data.purchase_units[0].payments.captures[0].amount.value;
+                    clearCardStatus();
+                    showSuccessModal(data.id, amount);
+                    refreshBalance();
+                } else {
+                    updateCardStatus('Payment failed: ' + (data.error || data.status), 'error');
+                }
+            } catch (err) {
+                hideProcessingModal();
+                console.error('Saved card payment error:', err);
+                updateCardStatus('Payment error: ' + err.message, 'error');
+            }
+            btn.disabled = false;
+        }
+
+        // Init: check auth → init V6 core (card fields + PayPal button) → load saved methods
+        checkAuth().then(async (user) => {
+            if (user) {
+                // External app: neutral button + hide card fields (Apple policy)
+                if (window.isAJExternalApp) {
+                    const btn = document.getElementById('paypal-btn');
+                    if (btn) btn.innerHTML = '<span style="font-weight:600;font-size:15px;color:#333;">Continue to Purchase</span>';
+                    // Hide card fields section (not supported via external link)
+                    const cardSection = document.querySelector('.card-fields-section');
+                    if (cardSection) cardSection.style.display = 'none';
+                    // Hide vault checkbox text mentioning payment method
+                    const vaultOption = document.querySelector('.vault-option');
+                    if (vaultOption) vaultOption.style.display = 'none';
+                } else {
+                    await initPayPal();      // V6 SDK for card fields (browser only)
+                }
+                await loadSavedMethods();
+
+                // Handle mobile payment return
+                const params = new URLSearchParams(window.location.search);
+                const paymentResult = params.get('payment');
+                if (paymentResult === 'success') {
+                    const orderId = params.get('orderId') || '';
+                    const amount = params.get('amount') || '';
+                    showSuccessModal(orderId, amount);
+                    refreshBalance();
+                    loadSavedMethods();
+                    history.replaceState(null, '', '/');
+                } else if (paymentResult === 'failed' || paymentResult === 'error') {
+                    showStatus('Payment failed. Please try again.', 'error');
+                    history.replaceState(null, '', '/');
+                }
+            }
+        });
+
+        function selectProduct(el) {
+            document.querySelectorAll('.vip-card, .coin-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedProduct = el.dataset.product;
+            clearStatus();
+        }
+
+        function showStatus(message, type) {
+            const el = document.getElementById('status-message');
+            el.textContent = message;
+            el.className = 'status-message ' + type;
+        }
+
+        function clearStatus() {
+            const el = document.getElementById('status-message');
+            el.className = 'status-message';
+            el.style.display = 'none';
+        }
+
+        function showProcessingModal() {
+            document.getElementById('processing-modal').classList.add('show');
+        }
+
+        function hideProcessingModal() {
+            document.getElementById('processing-modal').classList.remove('show');
+        }
+
+        function showSuccessModal(orderId, amount) {
+            document.getElementById('modal-order').textContent = 'Order: ' + orderId;
+            document.getElementById('modal-amount').textContent = '$' + amount;
+            document.getElementById('success-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('success-modal').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
